@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ContactoModule } from './contacto/contacto.module';
 import { AsesorModule } from './asesor/asesor.module';
+import { SeguimientoModule } from './seguimiento/seguimiento.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AsesorModule } from './asesor/asesor.module';
     }),
     ContactoModule,
     AsesorModule,
+    SeguimientoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
