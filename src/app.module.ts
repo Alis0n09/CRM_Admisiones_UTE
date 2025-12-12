@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ContactoModule } from './contacto/contacto.module';
+import { AsesorModule } from './asesor/asesor.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ContactoModule } from './contacto/contacto.module';
       // ssl: { rejectUnauthorized: false },
     }),
     ContactoModule,
+    AsesorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
