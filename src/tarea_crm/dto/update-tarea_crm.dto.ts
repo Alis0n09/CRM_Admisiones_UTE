@@ -6,7 +6,7 @@ import {
   IsEnum,
   Length,
 } from 'class-validator';
-import { UUID } from 'typeorm/driver/mongodb/bson.typings.js';
+
 
 
 export class UpdateTareaDto {

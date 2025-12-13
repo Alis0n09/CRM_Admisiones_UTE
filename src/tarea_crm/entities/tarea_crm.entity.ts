@@ -10,32 +10,27 @@ import { Contacto } from 'src/contacto/entities/contacto.entity';
 
 @Entity('tareas_crm')
 export class TareaCrm {
- 
+
   @PrimaryGeneratedColumn('uuid')
   id_tarea: string;
- 
-  @ManyToOne(() => Asesor, (asesor) => asesor.tareas, { eager: true })
+
+  @ManyToOne(() => Asesor, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_asesor' })
   asesor: Asesor;
 
-  @ManyToOne(() => Contacto, (contacto) => contacto.tareas, { eager: true })
+  @ManyToOne(() => Contacto, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_contacto' })
   contacto: Contacto;
 
-  @Column('text')
+  @Column({ type: 'text', nullable: true })
   descripcion: string;
 
-  @Column({ type: 'date', default: () => 'CURRENT_DATE' })
-  fecha_asignacion: string;
+  @Column({ type: 'date', nullable: true })
+  fecha_asignacion: Date;
 
   @Column({ type: 'date', nullable: true })
-  fecha_vencimiento: string;
+  fecha_vencimiento: Date;
 
-  @Column({
-    type: 'varchar',
-    length: 20,
-    default: 'Pendiente',
-    comment: 'Pendiente, En progreso, Completada',
-  })
+  @Column({ type: 'varchar', length: 20, nullable: true })
   estado: string;
 }
