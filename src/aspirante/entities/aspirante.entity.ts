@@ -13,7 +13,7 @@ export class Aspirante {
   @PrimaryGeneratedColumn('uuid')
   id_aspirante: string;
 
-  @ManyToOne(() => Contacto, { nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => Contacto, { nullable: false, onDelete: 'CASCADE', eager: true})
   @JoinColumn({ name: 'id_contacto' })
   contacto: Contacto;
 

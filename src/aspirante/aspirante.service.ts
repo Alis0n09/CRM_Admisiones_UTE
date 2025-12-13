@@ -18,17 +18,21 @@ export class AspiranteService {
   ) {}
 
 
-  async create(
-    createAspiranteDto: CreateAspiranteDto,
-  ): Promise<Aspirante | null> {
-    try {
-      const aspirante = this.aspiranteRepository.create(createAspiranteDto);
-      return await this.aspiranteRepository.save(aspirante);
-    } catch (error) {
-      console.error('Error al crear el aspirante', error);
-      return null;
-    }
+async create(createAspiranteDto: CreateAspiranteDto): Promise<Aspirante | null> {
+  try {
+    const { id_contacto, ...resto } = createAspiranteDto;
+
+    const aspirante = this.aspiranteRepository.create({
+      ...resto,
+      contacto: { id_contacto } as any,
+    });
+
+    return await this.aspiranteRepository.save(aspirante);
+  } catch (error) {
+    console.error('Error al crear el aspirante', error);
+    return null;
   }
+}
 
   
   async findAll(
