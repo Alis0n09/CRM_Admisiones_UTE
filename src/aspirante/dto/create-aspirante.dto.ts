@@ -1,8 +1,8 @@
-import { IsString, IsOptional, Length, IsDateString } from 'class-validator';
+import { IsString, IsOptional, Length, IsDateString, IsUUID } from 'class-validator';
 
 export class CreateAspiranteDto {
 
-  @IsString()
+  @IsUUID()
   id_contacto: string;
 
   @IsOptional()
