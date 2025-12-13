@@ -1,10 +1,7 @@
 import {
-  IsInt,
   IsString,
   IsDateString,
   IsOptional,
-  IsEnum,
-  Length,
 } from 'class-validator';
 
 

@@ -11,7 +11,7 @@ import { CarreraModule } from './carrera/carrera.module';
 import { AspiranteModule } from './aspirante/aspirante.module';
 import { PostulacionModule } from './postulacion/postulacion.module'; 
 import { Aspirante } from './aspirante/entities/aspirante.entity';
-import { AspiranteModule } from './aspirante/aspirante.module';
+import { MatriculaModule } from './matricula/matricula.module';
 
 @Module({
   imports: [
@@ -33,8 +33,8 @@ import { AspiranteModule } from './aspirante/aspirante.module';
     SeguimientoModule,
     CarreraModule,
     AspiranteModule,
-    PostulacionModule
-    AspiranteModule
+    PostulacionModule,
+    MatriculaModule
   ],
   controllers: [AppController],
   providers: [AppService],

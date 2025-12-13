@@ -35,26 +35,32 @@ async create(createAspiranteDto: CreateAspiranteDto): Promise<Aspirante | null> 
 }
 
   
-  async findAll(
-    options: IPaginationOptions,
-  ): Promise<Pagination<Aspirante>> {
-    const queryBuilder =
-      this.aspiranteRepository.createQueryBuilder('aspirante');
-    queryBuilder.orderBy('aspirante.fecha_registro', 'DESC');
-    return paginate<Aspirante>(queryBuilder, options);
-  }
+async findAll(
+  options: IPaginationOptions,
+): Promise<Pagination<Aspirante>> {
+  const queryBuilder =
+    this.aspiranteRepository.createQueryBuilder('aspirante');
+
+  queryBuilder
+    .leftJoinAndSelect('aspirante.contacto', 'contacto')
+    .orderBy('aspirante.fecha_registro', 'DESC');
+
+  return paginate<Aspirante>(queryBuilder, options);
+}
 
 
-  async findOne(id_aspirante: string): Promise<Aspirante | null> {
-    try {
-      return await this.aspiranteRepository.findOne({
-        where: { id_aspirante },
-      });
-    } catch (error) {
-      console.error('Error al buscar el aspirante', error);
-      return null;
-    }
+async findOne(id_aspirante: string): Promise<Aspirante | null> {
+  try {
+    return await this.aspiranteRepository.findOne({
+      where: { id_aspirante },
+      relations: ['contacto'],
+    });
+  } catch (error) {
+    console.error('Error al buscar el aspirante', error);
+    return null;
   }
+}
+
 
   
   async update(

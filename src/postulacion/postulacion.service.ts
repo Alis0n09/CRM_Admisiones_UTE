@@ -15,42 +15,54 @@ export class PostulacionService {
   ) {}
 
  
-  async create(
-    createPostulacionDto: CreatePostulacionDto,
-  ): Promise<Postulacion | null> {
-    try {
-      const postulacion = this.postulacionRepository.create(
-        createPostulacionDto,
-      );
-      return await this.postulacionRepository.save(postulacion);
-    } catch (error) {
-      console.error('Error al crear la postulacion', error);
-      return null;
-    }
+async create(createPostulacionDto: CreatePostulacionDto): Promise<Postulacion | null> {
+  try {
+    const { id_aspirante, id_carrera, ...resto } = createPostulacionDto;
+
+    const postulacion = this.postulacionRepository.create({
+      ...resto,
+      aspirante: { id_aspirante } as any,
+      carrera: { id_carrera } as any,
+    });
+
+    const saved = await this.postulacionRepository.save(postulacion);
+
+    // devolver ya con relaciones
+    return await this.postulacionRepository.findOne({
+      where: { id_postulacion: saved.id_postulacion },
+      relations: ['aspirante', 'carrera'],
+    });
+  } catch (error) {
+    console.error('Error al crear la postulacion', error);
+    return null;
   }
+}
 
 
-  async findAll(
-    options: IPaginationOptions,
-  ): Promise<Pagination<Postulacion>> {
-    const queryBuilder =
-      this.postulacionRepository.createQueryBuilder('postulacion');
+async findAll(options: IPaginationOptions): Promise<Pagination<Postulacion>> {
+  const queryBuilder = this.postulacionRepository.createQueryBuilder('postulacion');
 
-    queryBuilder.orderBy('postulacion.fecha_postulacion', 'DESC');
+  queryBuilder
+    .leftJoinAndSelect('postulacion.aspirante', 'aspirante')
+    .leftJoinAndSelect('postulacion.carrera', 'carrera')
+    .orderBy('postulacion.fecha_postulacion', 'DESC');
 
-    return paginate<Postulacion>(queryBuilder, options);
+  return paginate<Postulacion>(queryBuilder, options);
+}
+
+
+async findOne(id_postulacion: string): Promise<Postulacion | null> {
+  try {
+    return await this.postulacionRepository.findOne({
+      where: { id_postulacion },
+      relations: ['aspirante', 'carrera'],
+    });
+  } catch (error) {
+    console.error('Error al buscar la postulacion', error);
+    return null;
   }
+}
 
-  async findOne(id_postulacion: string): Promise<Postulacion | null> {
-    try {
-      return await this.postulacionRepository.findOne({
-        where: { id_postulacion },
-      });
-    } catch (error) {
-      console.error('Error al buscar la postulacion', error);
-      return null;
-    }
-  }
 
  
   async update(

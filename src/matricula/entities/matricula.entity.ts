@@ -8,29 +8,26 @@ import {
 import { Aspirante } from 'src/aspirante/entities/aspirante.entity';
 import { Carrera } from 'src/carrera/entities/carrera.entity';
 
-@Entity('postulaciones')
-export class Postulacion {
+@Entity('matriculas')
+export class Matricula {
 
   @PrimaryGeneratedColumn('uuid')
-  id_postulacion: string;
+  id_matricula: string;
 
-  @ManyToOne(() => Aspirante, { nullable: false, onDelete: 'CASCADE', eager: true })
+  @ManyToOne(() => Aspirante, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_aspirante' })
   aspirante: Aspirante;
 
-  @ManyToOne(() => Carrera, { nullable: false, eager: true })
+  @ManyToOne(() => Carrera, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_carrera' })
   carrera: Carrera;
 
-  @Column({ length: 20 })
+  @Column({ type: 'date', default: () => 'CURRENT_DATE' })
+  fecha_matricula: Date;
+
+  @Column({ length: 20, nullable: false })
   periodo_academico: string;
 
-  @Column({ type: 'date', default: () => 'CURRENT_DATE' })
-  fecha_postulacion: Date;
-
-  @Column({ length: 20, default: 'Pendiente' })
-  estado_postulacion: string;
-
-  @Column({ type: 'text', nullable: true })
-  observaciones: string;
+  @Column({ length: 20, default: 'Activa' })
+  estado: string; // Activa, Inactiva, Suspendida, Egresado
 }
