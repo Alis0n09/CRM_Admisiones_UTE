@@ -7,7 +7,7 @@ export class Seguimiento {
   @PrimaryGeneratedColumn('uuid')
   id_seguimiento: string;
 
-  @ManyToOne(() => Contacto, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Contacto, { onDelete: 'CASCADE'})
   @JoinColumn({ name: 'id_contacto' }) 
   contacto: Contacto;
 
@@ -26,4 +26,5 @@ export class Seguimiento {
   @Column({ type: 'date', nullable: true })
   fecha_proximo_contacto: Date;
 }
+
 

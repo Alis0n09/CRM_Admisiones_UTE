@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ContactoModule } from './contacto/contacto.module';
+import { TareaCrmModule } from './tarea_crm/tarea_crm.module';
 import { AsesorModule } from './asesor/asesor.module';
 import { SeguimientoModule } from './seguimiento/seguimiento.module';
 
@@ -22,8 +23,9 @@ import { SeguimientoModule } from './seguimiento/seguimiento.module';
       // ssl: { rejectUnauthorized: false },
     }),
     ContactoModule,
+    TareaCrmModule,
     AsesorModule,
-    SeguimientoModule,
+    SeguimientoModule
   ],
   controllers: [AppController],
   providers: [AppService],
