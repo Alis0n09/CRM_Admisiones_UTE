@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { TareaCrm } from 'src/tarea_crm/entities/tarea_crm.entity';
 @Entity('contactos')
 export class Contacto {
   @PrimaryGeneratedColumn('uuid')
@@ -43,4 +43,7 @@ export class Contacto {
 
   @Column({ length: 30, default: 'Nuevo' })
   estado: string;
+
+  @OneToMany(() => TareaCrm, (tarea) => tarea.contacto)
+  tareas: TareaCrm[]
 }
