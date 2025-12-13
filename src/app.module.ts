@@ -8,6 +8,8 @@ import { TareaCrmModule } from './tarea_crm/tarea_crm.module';
 import { AsesorModule } from './asesor/asesor.module';
 import { SeguimientoModule } from './seguimiento/seguimiento.module';
 import { CarreraModule } from './carrera/carrera.module';
+import { Aspirante } from './aspirante/entities/aspirante.entity';
+import { AspiranteModule } from './aspirante/aspirante.module';
 
 @Module({
   imports: [
@@ -27,7 +29,8 @@ import { CarreraModule } from './carrera/carrera.module';
     TareaCrmModule,
     AsesorModule,
     SeguimientoModule,
-    CarreraModule
+    CarreraModule,
+    AspiranteModule
   ],
   controllers: [AppController],
   providers: [AppService],
