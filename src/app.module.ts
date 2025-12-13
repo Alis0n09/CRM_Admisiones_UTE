@@ -10,6 +10,8 @@ import { SeguimientoModule } from './seguimiento/seguimiento.module';
 import { CarreraModule } from './carrera/carrera.module';
 import { AspiranteModule } from './aspirante/aspirante.module';
 import { PostulacionModule } from './postulacion/postulacion.module'; 
+import { Aspirante } from './aspirante/entities/aspirante.entity';
+import { AspiranteModule } from './aspirante/aspirante.module';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { PostulacionModule } from './postulacion/postulacion.module';
     CarreraModule,
     AspiranteModule,
     PostulacionModule
+    AspiranteModule
   ],
   controllers: [AppController],
   providers: [AppService],
