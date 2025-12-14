@@ -44,7 +44,7 @@ import { BecaEstudianteModule } from './beca_estudiante/beca_estudiante.module';
     MatriculaModule,
     ExamenAdmisionModule,
     ResultadoExamenModule,
-    DocumentosPostulacionModule
+    DocumentosPostulacionModule,
     BecaModule,
     RequisitoBecaModule,
     ContactoAspiranteModule,
