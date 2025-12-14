@@ -14,6 +14,8 @@ import { Aspirante } from './aspirante/entities/aspirante.entity';
 import { MatriculaModule } from './matricula/matricula.module';
 import { BecaModule } from './beca/beca.module';
 import { RequisitoBecaModule } from './requisito_beca/requisito_beca.module';
+import { ContactoAspiranteModule } from './contacto_aspirante/contacto_aspirante.module'; 
+import { BecaEstudianteModule } from './beca_estudiante/beca_estudiante.module';
 
 @Module({
   imports: [
@@ -38,7 +40,9 @@ import { RequisitoBecaModule } from './requisito_beca/requisito_beca.module';
     PostulacionModule,
     MatriculaModule,
     BecaModule,
-    RequisitoBecaModule
+    RequisitoBecaModule,
+    ContactoAspiranteModule,
+    BecaEstudianteModule
   ],
   controllers: [AppController],
   providers: [AppService],
