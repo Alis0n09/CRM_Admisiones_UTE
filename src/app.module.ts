@@ -12,6 +12,8 @@ import { AspiranteModule } from './aspirante/aspirante.module';
 import { PostulacionModule } from './postulacion/postulacion.module'; 
 import { Aspirante } from './aspirante/entities/aspirante.entity';
 import { MatriculaModule } from './matricula/matricula.module';
+import { BecaModule } from './beca/beca.module';
+import { RequisitoBecaModule } from './requisito_beca/requisito_beca.module';
 
 @Module({
   imports: [
@@ -34,7 +36,9 @@ import { MatriculaModule } from './matricula/matricula.module';
     CarreraModule,
     AspiranteModule,
     PostulacionModule,
-    MatriculaModule
+    MatriculaModule,
+    BecaModule,
+    RequisitoBecaModule
   ],
   controllers: [AppController],
   providers: [AppService],
