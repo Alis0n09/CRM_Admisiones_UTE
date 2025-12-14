@@ -12,6 +12,9 @@ import { AspiranteModule } from './aspirante/aspirante.module';
 import { PostulacionModule } from './postulacion/postulacion.module'; 
 import { Aspirante } from './aspirante/entities/aspirante.entity';
 import { MatriculaModule } from './matricula/matricula.module';
+import { ExamenAdmisionModule } from './examen_admision/examen_admision.module';
+import { ResultadoExamenModule } from './resultado_examen/resultado_examen.module';
+import { DocumentosPostulacionModule } from './documento_postulacion/documento_postulacion.module';
 import { BecaModule } from './beca/beca.module';
 import { RequisitoBecaModule } from './requisito_beca/requisito_beca.module';
 
@@ -37,6 +40,9 @@ import { RequisitoBecaModule } from './requisito_beca/requisito_beca.module';
     AspiranteModule,
     PostulacionModule,
     MatriculaModule,
+    ExamenAdmisionModule,
+    ResultadoExamenModule,
+    DocumentosPostulacionModule
     BecaModule,
     RequisitoBecaModule
   ],
