@@ -10,12 +10,12 @@ export class CreateResultadoExamenDto {
   @IsNotEmpty()
   id_examen: string;
 
-  @Type(() => Number) // convierte "99.5" -> 99.5 si llega como string
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   puntaje_obtenido: number;
 
   @IsDateString()
   @IsNotEmpty()
-  fecha_resultado: Date;
+  fecha_resultado: string;
 }

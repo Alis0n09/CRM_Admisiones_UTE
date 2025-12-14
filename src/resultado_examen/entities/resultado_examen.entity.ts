@@ -5,26 +5,24 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
-import { Postulacion } from '../../postulacion/entities/postulacion.entity';
+import { Postulacion } from 'src/postulacion/entities/postulacion.entity';
 import { ExamenAdmision } from '../../examen_admision/entities/examen_admision.entity';
-
-@Entity('resultado_examen')
+@Entity('resultados_examen')
 export class ResultadoExamen {
   @PrimaryGeneratedColumn('uuid')
   id_resultado: string;
 
-  @ManyToOne(() => Postulacion, { nullable: false })
+  @ManyToOne(() => Postulacion, { nullable: false, onDelete: 'CASCADE', eager: true })
   @JoinColumn({ name: 'id_postulacion' })
   postulacion: Postulacion;
 
-  @ManyToOne(() => ExamenAdmision, { nullable: false })
+  @ManyToOne(() => ExamenAdmision, { nullable: false, onDelete: 'CASCADE', eager: true })
   @JoinColumn({ name: 'id_examen' })
   examen: ExamenAdmision;
 
-  @Column('decimal', { precision: 5, scale: 2 })
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: false })
   puntaje_obtenido: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: false })
   fecha_resultado: Date;
 }
