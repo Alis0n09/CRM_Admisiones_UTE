@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Param, Patch, Post, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ResultadoExamenService } from './resultado_examen.service';
 import { CreateResultadoExamenDto } from './dto/create-resultado_examen.dto';
 import { UpdateResultadoExamenDto } from './dto/update-resultado_examen.dto';
 
-@Controller('resultado-examen') //
+@Controller('resultado-examen')
 export class ResultadoExamenController {
   constructor(private readonly service: ResultadoExamenService) {}
 
@@ -17,22 +26,30 @@ export class ResultadoExamenController {
     return await this.service.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.service.findOne(id);
+  @Get(':id_resultado')
+  async findOne(@Param('id_resultado') id_resultado: string) {
+    return await this.service.findOne(id_resultado);
   }
 
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
+  @Put(':id_resultado')
+  async updatePut(
+    @Param('id_resultado') id_resultado: string,
     @Body() dto: UpdateResultadoExamenDto,
   ) {
-    return await this.service.update(id, dto);
+    return await this.service.update(id_resultado, dto);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    await this.service.remove(id);
+  @Patch(':id_resultado')
+  async updatePatch(
+    @Param('id_resultado') id_resultado: string,
+    @Body() dto: UpdateResultadoExamenDto,
+  ) {
+    return await this.service.update(id_resultado, dto);
+  }
+
+  @Delete(':id_resultado')
+  async remove(@Param('id_resultado') id_resultado: string) {
+    await this.service.remove(id_resultado);
     return { message: 'Resultado eliminado correctamente' };
   }
 }

@@ -14,6 +14,7 @@ import { Aspirante } from './aspirante/entities/aspirante.entity';
 import { MatriculaModule } from './matricula/matricula.module';
 import { ExamenAdmisionModule } from './examen_admision/examen_admision.module';
 import { ResultadoExamenModule } from './resultado_examen/resultado_examen.module';
+import { DocumentosPostulacionModule } from './documento_postulacion/documento_postulacion.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { ResultadoExamenModule } from './resultado_examen/resultado_examen.modul
     PostulacionModule,
     MatriculaModule,
     ExamenAdmisionModule,
-    ResultadoExamenModule
+    ResultadoExamenModule,
+    DocumentosPostulacionModule
   ],
   controllers: [AppController],
   providers: [AppService],

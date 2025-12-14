@@ -14,8 +14,9 @@ export class ResultadoExamenService {
 
   async create(dto: CreateResultadoExamenDto): Promise<ResultadoExamen> {
     const resultado = this.repo.create({
-      postulacion: { id_postulacion: dto.id_postulacion } as any,
-      examen: { id_examen: dto.id_examen } as any,
+      // ✅ clave: usar 'id' (PK típica del entity relacionado)
+      postulacion: { id: dto.id_postulacion } as any,
+      examen: { id: dto.id_examen } as any,
       puntaje_obtenido: dto.puntaje_obtenido,
       fecha_resultado: dto.fecha_resultado,
     });
@@ -48,21 +49,12 @@ export class ResultadoExamenService {
   ): Promise<ResultadoExamen> {
     const resultado = await this.findOne(id);
 
-    if (dto.id_postulacion !== undefined) {
-      resultado.postulacion = { id_postulacion: dto.id_postulacion } as any;
-    }
 
-    if (dto.id_examen !== undefined) {
-      resultado.examen = { id_examen: dto.id_examen } as any;
-    }
+    resultado.postulacion = { id: dto.id_postulacion } as any;
+    resultado.examen = { id: dto.id_examen } as any;
 
-    if (dto.puntaje_obtenido !== undefined) {
-      resultado.puntaje_obtenido = dto.puntaje_obtenido;
-    }
-
-    if (dto.fecha_resultado !== undefined) {
-      resultado.fecha_resultado = dto.fecha_resultado;
-    }
+    resultado.puntaje_obtenido = dto.puntaje_obtenido;
+    resultado.fecha_resultado = dto.fecha_resultado;
 
     return await this.repo.save(resultado);
   }

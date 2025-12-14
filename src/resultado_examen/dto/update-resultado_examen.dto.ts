@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 
 export class UpdateResultadoExamenDto {
@@ -9,6 +10,7 @@ export class UpdateResultadoExamenDto {
   @IsNotEmpty()
   id_examen: string;
 
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   puntaje_obtenido: number;
