@@ -1,119 +1,113 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { paginate, IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 
 import { BecaEstudiante } from './entities/beca_estudiante.entity';
 import { CreateBecaEstudianteDto } from './dto/create-beca_estudiante.dto';
 import { UpdateBecaEstudianteDto } from './dto/update-beca_estudiante.dto';
 
+import { Beca } from 'src/beca/entities/beca.entity';
+import { Aspirante } from 'src/aspirante/entities/aspirante.entity';
+
 @Injectable()
 export class BecaEstudianteService {
   constructor(
     @InjectRepository(BecaEstudiante)
-    private readonly becaEstudianteRepository: Repository<BecaEstudiante>,
+    private readonly becaEstRepo: Repository<BecaEstudiante>,
+
+    @InjectRepository(Beca)
+    private readonly becaRepo: Repository<Beca>,
+
+    @InjectRepository(Aspirante)
+    private readonly aspiranteRepo: Repository<Aspirante>,
   ) {}
 
-  async create(
-    dto: CreateBecaEstudianteDto,
-  ): Promise<BecaEstudiante | null> {
-    try {
-      const existe = await this.becaEstudianteRepository.findOne({
-        where: {
-          id_beca: dto.id_beca,
-          id_aspirante: dto.id_aspirante,
-          periodo_academico: dto.periodo_academico,
-        },
-      });
+  // ===== POST =====
+  async create(dto: CreateBecaEstudianteDto) {
+    const beca = await this.becaRepo.findOneBy({ id_beca: dto.id_beca });
+    if (!beca) throw new BadRequestException('La beca no existe');
 
-      if (existe) return existe;
+    const aspirante = await this.aspiranteRepo.findOneBy({
+      id_aspirante: dto.id_aspirante,
+    });
+    if (!aspirante)
+      throw new BadRequestException('El aspirante no existe');
 
-     
-      const becaEstudiante = this.becaEstudianteRepository.create({
-        id_beca: dto.id_beca,
+    const entity = this.becaEstRepo.create({
+      beca,
+      aspirante,
+      periodo_academico: dto.periodo_academico,
+      monto_otorgado: dto.monto_otorgado,
+      fecha_asignacion: dto.fecha_asignacion
+        ? new Date(dto.fecha_asignacion)
+        : undefined,
+      estado: dto.estado ?? 'Vigente',
+    });
+
+    return this.becaEstRepo.save(entity);
+  }
+
+  // ===== GET ALL =====
+  findAll() {
+    return this.becaEstRepo.find({
+      relations: ['beca', 'aspirante'],
+    });
+  }
+
+  // ===== GET BY ID =====
+  async findOne(id: string) {
+    const row = await this.becaEstRepo.findOne({
+      where: { id_beca_estudiante: id },
+      relations: ['beca', 'aspirante'],
+    });
+
+    if (!row)
+      throw new NotFoundException('Asignación de beca no encontrada');
+
+    return row;
+  }
+
+  // ===== PUT =====
+  async update(id: string, dto: UpdateBecaEstudianteDto) {
+    const row = await this.findOne(id);
+
+    if (dto.id_beca) {
+      const beca = await this.becaRepo.findOneBy({ id_beca: dto.id_beca });
+      if (!beca) throw new BadRequestException('La beca no existe');
+      row.beca = beca;
+    }
+
+    if (dto.id_aspirante) {
+      const aspirante = await this.aspiranteRepo.findOneBy({
         id_aspirante: dto.id_aspirante,
-        fecha_asignacion: dto.fecha_asignacion,
-        periodo_academico: dto.periodo_academico,
-        monto_otorgado: dto.monto_otorgado.toString(), 
-        estado: dto.estado ?? 'Vigente',
       });
-
-      return await this.becaEstudianteRepository.save(becaEstudiante);
-    } catch (error) {
-      console.error('Error al crear beca_estudiante', error);
-      return null;
+      if (!aspirante)
+        throw new BadRequestException('El aspirante no existe');
+      row.aspirante = aspirante;
     }
+
+    if (dto.periodo_academico)
+      row.periodo_academico = dto.periodo_academico;
+
+    if (dto.monto_otorgado)
+      row.monto_otorgado = dto.monto_otorgado;
+
+    if (dto.estado) row.estado = dto.estado;
+
+    if (dto.fecha_asignacion)
+      row.fecha_asignacion = new Date(dto.fecha_asignacion);
+
+    return this.becaEstRepo.save(row);
   }
 
-  async findAll(
-    options: IPaginationOptions,
-  ): Promise<Pagination<BecaEstudiante>> {
-    const queryBuilder = this.becaEstudianteRepository
-      .createQueryBuilder('be')
-      .leftJoinAndSelect('be.beca', 'beca')
-      .leftJoinAndSelect('be.aspirante', 'aspirante')
-      .orderBy('be.fecha_asignacion', 'DESC');
-
-    return paginate<BecaEstudiante>(queryBuilder, options);
-  }
-
-
-  async findOne(
-    id_beca_estudiante: string,
-  ): Promise<BecaEstudiante | null> {
-    try {
-      return await this.becaEstudianteRepository
-        .createQueryBuilder('be')
-        .leftJoinAndSelect('be.beca', 'beca')
-        .leftJoinAndSelect('be.aspirante', 'aspirante')
-        .where('be.id_beca_estudiante = :id', { id: id_beca_estudiante })
-        .getOne();
-    } catch (error) {
-      console.error('Error al buscar beca_estudiante', error);
-      return null;
-    }
-  }
-
-
-  async update(
-    id_beca_estudiante: string,
-    dto: UpdateBecaEstudianteDto,
-  ): Promise<BecaEstudiante | null> {
-    try {
-      const becaEstudiante = await this.becaEstudianteRepository.findOne({
-        where: { id_beca_estudiante },
-      });
-
-      if (!becaEstudiante) return null;
-
-      if (dto.monto_otorgado !== undefined) {
-        becaEstudiante.monto_otorgado = dto.monto_otorgado.toString();
-      }
-
-      Object.assign(becaEstudiante, dto);
-
-      return await this.becaEstudianteRepository.save(becaEstudiante);
-    } catch (error) {
-      console.error('Error al actualizar beca_estudiante', error);
-      return null;
-    }
-  }
-
-
-  async remove(
-    id_beca_estudiante: string,
-  ): Promise<BecaEstudiante | null> {
-    try {
-      const becaEstudiante = await this.becaEstudianteRepository.findOne({
-        where: { id_beca_estudiante },
-      });
-
-      if (!becaEstudiante) return null;
-
-      return await this.becaEstudianteRepository.remove(becaEstudiante);
-    } catch (error) {
-      console.error('Error al eliminar beca_estudiante', error);
-      return null;
-    }
+  // ===== DELETE =====
+  async remove(id: string) {
+    const row = await this.findOne(id);
+    await this.becaEstRepo.remove(row);
+    return { deleted: true };
   }
 }

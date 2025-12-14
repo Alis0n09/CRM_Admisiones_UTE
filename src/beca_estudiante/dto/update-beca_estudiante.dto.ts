@@ -1,24 +1,33 @@
-import { IsOptional, IsString, Length, IsDate, IsNumber } from 'class-validator';
-import { Type } from 'class-transformer';
+import {
+  IsUUID,
+  IsString,
+  IsOptional,
+  IsIn,
+  IsNumberString,
+} from 'class-validator';
 
 export class UpdateBecaEstudianteDto {
+  @IsOptional()
+  @IsUUID()
+  id_beca?: string;
 
   @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  fecha_asignacion?: Date;
+  @IsUUID()
+  id_aspirante?: string;
 
   @IsOptional()
   @IsString()
-  @Length(1, 20)
   periodo_academico?: string;
 
   @IsOptional()
-  @IsNumber()
-  monto_otorgado?: number;
+  @IsNumberString()
+  monto_otorgado?: string;
 
   @IsOptional()
   @IsString()
-  @Length(1, 20)
+  fecha_asignacion?: string;
+
+  @IsOptional()
+  @IsIn(['Vigente', 'Suspendida', 'Finalizada'])
   estado?: string;
 }
