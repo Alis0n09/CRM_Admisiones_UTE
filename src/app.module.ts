@@ -17,6 +17,8 @@ import { ResultadoExamenModule } from './resultado_examen/resultado_examen.modul
 import { DocumentosPostulacionModule } from './documento_postulacion/documento_postulacion.module';
 import { BecaModule } from './beca/beca.module';
 import { RequisitoBecaModule } from './requisito_beca/requisito_beca.module';
+import { ContactoAspiranteModule } from './contacto_aspirante/contacto_aspirante.module'; 
+import { BecaEstudianteModule } from './beca_estudiante/beca_estudiante.module';
 
 @Module({
   imports: [
@@ -44,7 +46,9 @@ import { RequisitoBecaModule } from './requisito_beca/requisito_beca.module';
     ResultadoExamenModule,
     DocumentosPostulacionModule
     BecaModule,
-    RequisitoBecaModule
+    RequisitoBecaModule,
+    ContactoAspiranteModule,
+    BecaEstudianteModule
   ],
   controllers: [AppController],
   providers: [AppService],
