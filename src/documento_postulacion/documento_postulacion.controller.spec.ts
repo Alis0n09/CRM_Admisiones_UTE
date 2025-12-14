@@ -1,17 +1,32 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DocumentoPostulacionController } from './documento_postulacion.controller';
-import { DocumentoPostulacionService } from './documento_postulacion.service';
+import { DocumentosPostulacionController } from './documento_postulacion.controller';
+import { DocumentosPostulacionService } from './documento_postulacion.service';
 
 describe('DocumentoPostulacionController', () => {
-  let controller: DocumentoPostulacionController;
+  let controller: DocumentosPostulacionController;
+
+  const mockService = {
+    create: jest.fn(),
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [DocumentoPostulacionController],
-      providers: [DocumentoPostulacionService],
+      controllers: [DocumentosPostulacionController],
+      providers: [
+        {
+          provide: DocumentosPostulacionService,
+          useValue: mockService,
+        },
+      ],
     }).compile();
 
-    controller = module.get<DocumentoPostulacionController>(DocumentoPostulacionController);
+    controller = module.get<DocumentosPostulacionController>(
+      DocumentosPostulacionController,
+    );
   });
 
   it('should be defined', () => {
