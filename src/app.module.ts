@@ -13,6 +13,7 @@ import { PostulacionModule } from './postulacion/postulacion.module';
 import { Aspirante } from './aspirante/entities/aspirante.entity';
 import { MatriculaModule } from './matricula/matricula.module';
 import { ExamenAdmisionModule } from './examen_admision/examen_admision.module';
+import { ResultadoExamenModule } from './resultado_examen/resultado_examen.module';
 
 @Module({
   imports: [
@@ -36,7 +37,8 @@ import { ExamenAdmisionModule } from './examen_admision/examen_admision.module';
     AspiranteModule,
     PostulacionModule,
     MatriculaModule,
-    ExamenAdmisionModule
+    ExamenAdmisionModule,
+    ResultadoExamenModule
   ],
   controllers: [AppController],
   providers: [AppService],
