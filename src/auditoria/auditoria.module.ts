@@ -1,12 +1,17 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Auditoria } from './entities/auditoria.entity';
-import { AuditoriaService } from './auditoria.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AuditoriaController } from './auditoria.controller';
+import { AuditoriaService } from './auditoria.service';
+import { Auditoria, AuditoriaSchema } from './entities/auditoria.schema';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Auditoria])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Auditoria.name, schema: AuditoriaSchema },
+    ]),
+  ],
   controllers: [AuditoriaController],
   providers: [AuditoriaService],
+  exports: [AuditoriaService],
 })
 export class AuditoriaModule {}

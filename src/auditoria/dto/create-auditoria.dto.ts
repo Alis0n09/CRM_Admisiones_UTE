@@ -1,25 +1,26 @@
-import { IsString, IsOptional, IsUUID, Length } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsDateString,
+} from 'class-validator';
 
 export class CreateAuditoriaDto {
+
   @IsString()
-  @Length(1, 100)
-  usuario: string;
+  usuario: string; // email o identificador del usuario logueado
 
   @IsOptional()
   @IsString()
-  @Length(1, 50)
-  modulo?: string;
+  modulo?: string; // Usuarios, CRM, Admisiones, Becas, etc.
 
   @IsString()
-  @Length(1, 20)
-  accion: string;
+  accion: string; // INSERT, UPDATE, DELETE, LOGIN
 
   @IsString()
-  @Length(1, 100)
   tabla_afectada: string;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
   id_registro_afectado?: string;
 
   @IsOptional()
@@ -27,15 +28,14 @@ export class CreateAuditoriaDto {
   descripcion_cambio?: string;
 
   @IsOptional()
-  fecha_accion?: Date;
+  @IsDateString()
+  fecha_accion?: string; // opcional, por defecto Date.now
 
   @IsOptional()
   @IsString()
-  @Length(0, 45)
   ip_usuario?: string;
 
   @IsOptional()
   @IsString()
-  @Length(0, 100)
   terminal?: string;
 }
