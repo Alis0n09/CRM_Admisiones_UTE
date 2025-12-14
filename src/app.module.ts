@@ -21,6 +21,9 @@ import { ContactoAspiranteModule } from './contacto_aspirante/contacto_aspirante
 import { BecaEstudianteModule } from './beca_estudiante/beca_estudiante.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { RolModule } from './rol/rol.module';
+import { MailModule } from './mail/mail.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AuditoriaModule } from './auditoria/auditoria.module';
 
 @Module({
   imports: [
@@ -35,6 +38,9 @@ import { RolModule } from './rol/rol.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       // ssl: { rejectUnauthorized: false },
+    }),
+    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://localhost:27017/crm_admisiones_ute', {
+      dbName: 'crm_admisiones_ute', // opcional, si quieres especificar el nombre
     }),
     ContactoModule,
     TareaCrmModule,
@@ -52,7 +58,9 @@ import { RolModule } from './rol/rol.module';
     ContactoAspiranteModule,
     BecaEstudianteModule,
     UsuarioModule,
-    RolModule
+    RolModule,
+    MailModule,
+    AuditoriaModule
   ],
   controllers: [AppController],
   providers: [AppService],

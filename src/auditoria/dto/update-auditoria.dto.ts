@@ -1,26 +1,29 @@
-import { IsString, IsOptional, Length, IsInt, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsDateString,
+} from 'class-validator';
 
 export class UpdateAuditoriaDto {
 
+  @IsOptional()
   @IsString()
-  @Length(1, 100)
-  usuario: string;
+  usuario?: string;
 
   @IsOptional()
   @IsString()
-  @Length(1, 50)
   modulo?: string;
 
+  @IsOptional()
   @IsString()
-  @Length(1, 20)
-  accion: string;
-
-  @IsString()
-  @Length(1, 100)
-  tabla_afectada: string;
+  accion?: string;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
+  tabla_afectada?: string;
+
+  @IsOptional()
+  @IsString()
   id_registro_afectado?: string;
 
   @IsOptional()
@@ -28,15 +31,14 @@ export class UpdateAuditoriaDto {
   descripcion_cambio?: string;
 
   @IsOptional()
-  fecha_accion?: Date;
+  @IsDateString()
+  fecha_accion?: string;
 
   @IsOptional()
   @IsString()
-  @Length(1, 45)
   ip_usuario?: string;
 
   @IsOptional()
   @IsString()
-  @Length(1, 100)
   terminal?: string;
 }
