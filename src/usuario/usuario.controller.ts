@@ -14,14 +14,14 @@ import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { SuccessResponseDto } from 'src/common/dto/response.dto';
 import { Usuario } from './entities/usuario.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { diskStorage } from 'multer';
 
 @Controller('usuario')
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
-  // ======================
-  // CREATE
-  // ======================
   @Post()
   async create(@Body() dto: CreateUsuarioDto) {
     const usuario = await this.usuarioService.create(dto);
@@ -34,9 +34,6 @@ export class UsuarioController {
     return new SuccessResponseDto('Usuario creado con éxito', usuario);
   }
 
-  // ======================
-  // FIND ALL
-  // ======================
   @Get()
   async findAll(): Promise<SuccessResponseDto<Usuario[]>> {
     const usuarios = await this.usuarioService.findAll();
@@ -46,9 +43,6 @@ export class UsuarioController {
     );
   }
 
-  // ======================
-  // FIND ONE
-  // ======================
   @Get(':id_usuario')
   async findOne(@Param('id_usuario') id_usuario: string) {
     const usuario = await this.usuarioService.findOne(id_usuario);
@@ -62,9 +56,6 @@ export class UsuarioController {
     );
   }
 
-  // ======================
-  // UPDATE
-  // ======================
   @Put(':id_usuario')
   async update(
     @Param('id_usuario') id_usuario: string,
@@ -81,9 +72,6 @@ export class UsuarioController {
     );
   }
 
-  // ======================
-  // DELETE
-  // ======================
   @Delete(':id_usuario')
   async remove(@Param('id_usuario') id_usuario: string) {
     const usuario = await this.usuarioService.remove(id_usuario);
@@ -96,4 +84,30 @@ export class UsuarioController {
       usuario,
     );
   }
+  
+@Put(':id_usuario/profile')
+@UseInterceptors(FileInterceptor('profile', {
+  storage: diskStorage({
+    destination: './public/profile',
+    filename: (req, file, cb) => {
+      const uniqueName = `${Date.now()}-${file.originalname}`;
+      cb(null, uniqueName);
+    }
+  }),
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+      return cb(new BadRequestException('Only JPG or PNG files are allowed'), false);
+    }
+    cb(null, true);
+  }
+}))
+async uploadProfile(
+  @Param('id_usuario') id_usuario: string,
+  @UploadedFile() file: Express.Multer.File,
+) {
+  if (!file) throw new BadRequestException('Profile image is required');
+  const user = await this.usuarioService.updateProfile(id_usuario, file.filename);
+  return new SuccessResponseDto('Profile image updated', user);
 }
+}
+
