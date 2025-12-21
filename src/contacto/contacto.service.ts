@@ -14,7 +14,7 @@ export class ContactoService {
     private readonly contactoRepository: Repository<Contacto>,
   ) {}
 
-  // Crear contacto
+
   async create(createContactoDto: CreateContactoDto): Promise<Contacto | null> {
     try {
       const contacto = this.contactoRepository.create(createContactoDto);
@@ -25,14 +25,14 @@ export class ContactoService {
     }
   }
 
-  // Listar contactos con paginación
+ 
   async findAll(options: IPaginationOptions): Promise<Pagination<Contacto>> {
     const queryBuilder = this.contactoRepository.createQueryBuilder('contacto');
     queryBuilder.orderBy('contacto.nombres', 'ASC');
     return paginate<Contacto>(queryBuilder, options);
   }
 
-  // Buscar un contacto por ID
+ 
   async findOne(id_contacto: string): Promise<Contacto | null> {
     try {
       return await this.contactoRepository.findOne({ where: { id_contacto } });
@@ -42,7 +42,7 @@ export class ContactoService {
     }
   }
 
-  // Actualizar un contacto
+
   async update(
     id_contacto: string,
     updateContactoDto: UpdateContactoDto,
@@ -58,7 +58,7 @@ export class ContactoService {
     }
   }
 
-  // Eliminar un contacto
+
   async remove(id_contacto: string): Promise<Contacto | null> {
     try {
       const contacto = await this.contactoRepository.findOne({ where: { id_contacto } });

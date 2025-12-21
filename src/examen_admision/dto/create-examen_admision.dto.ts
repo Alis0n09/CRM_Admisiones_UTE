@@ -16,13 +16,13 @@ export class CreateExamenAdmisionDto {
   descripcion: string;
 
   @IsDateString()
-  fecha_programada: string; // YYYY-MM-DD
+  fecha_programada: string; 
 
   @IsInt()
   @Min(1)
   duracion_minutos: number;
 
-  // decimal(5,2) → se maneja como string
+  
   @IsNumberString()
   puntaje_minimo: string;
 }

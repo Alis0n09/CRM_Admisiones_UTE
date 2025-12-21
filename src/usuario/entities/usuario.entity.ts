@@ -31,7 +31,7 @@ export class Usuario {
   @Column({ nullable: true })
   profile: string;
 
-  // Roles (tabla intermedia usuario_roles)
+
   @ManyToMany(() => Rol, (rol) => rol.usuarios, { eager: true })
   @JoinTable({
     name: 'usuario_roles',
@@ -40,12 +40,12 @@ export class Usuario {
   })
   roles: Rol[];
 
-  // Perfil ASESOR (si este usuario es asesor)
+
   @OneToOne(() => Asesor, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'id_asesor' })
   asesor?: Asesor;
 
-  // Perfil ASPIRANTE (si este usuario es aspirante)
+  
   @OneToOne(() => Aspirante, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'id_aspirante' })
   aspirante?: Aspirante;

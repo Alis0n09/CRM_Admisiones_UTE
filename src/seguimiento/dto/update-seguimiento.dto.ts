@@ -8,7 +8,7 @@ export class UpdateSeguimientoDto {
 
   @IsOptional()
   @IsDateString()
-  fecha_contacto?: string; // formato: 'YYYY-MM-DD'
+  fecha_contacto?: string; 
 
   @IsOptional()
   @IsString()
@@ -25,5 +25,5 @@ export class UpdateSeguimientoDto {
 
   @IsOptional()
   @IsDateString()
-  fecha_proximo_contacto?: string; // formato: 'YYYY-MM-DD'
+  fecha_proximo_contacto?: string; 
 }

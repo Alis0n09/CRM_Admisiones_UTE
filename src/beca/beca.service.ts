@@ -15,13 +15,12 @@ export class BecaService {
 
   async create(createBecaDto: CreateBecaDto): Promise<Beca | null> {
     try {
-      // DTO tiene decimales como string (IsDecimal), por eso casteamos
+      
       const beca = this.becaRepository.create(createBecaDto as any);
 
-      // Forzamos el tipo para evitar que TS lo infiera como Beca[]
+      
       const saved = (await this.becaRepository.save(beca)) as unknown as Beca;
 
-      // devolver completo
       return await this.becaRepository.findOne({
         where: { id_beca: saved.id_beca },
       });
@@ -65,7 +64,7 @@ export class BecaService {
 
       const saved = (await this.becaRepository.save(beca)) as Beca;
 
-      // devolver completo actualizado
+     
       return await this.becaRepository.findOne({
         where: { id_beca: saved.id_beca },
       });

@@ -27,7 +27,7 @@ async create(createPostulacionDto: CreatePostulacionDto): Promise<Postulacion | 
 
     const saved = await this.postulacionRepository.save(postulacion);
 
-    // devolver ya con relaciones
+    
     return await this.postulacionRepository.findOne({
       where: { id_postulacion: saved.id_postulacion },
       relations: ['aspirante', 'carrera'],
