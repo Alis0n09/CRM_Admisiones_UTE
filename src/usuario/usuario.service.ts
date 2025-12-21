@@ -9,6 +9,7 @@ import { Usuario } from './entities/usuario.entity';
 import { Rol } from 'src/rol/entities/rol.entity';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UsuarioService {
@@ -20,9 +21,7 @@ export class UsuarioService {
     private readonly roleRepository: Repository<Rol>,
   ) {}
 
-  // ======================
-  // CREATE USUARIO
-  // ======================
+
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
     const {
       email,
@@ -32,14 +31,12 @@ export class UsuarioService {
       id_aspirante,
     } = createUsuarioDto;
 
-    // ❌ Validación lógica
     if (id_asesor && id_aspirante) {
       throw new BadRequestException(
         'Un usuario no puede ser asesor y aspirante al mismo tiempo',
       );
     }
 
-    // 🔎 Verificar rol
     const rol = await this.roleRepository.findOne({
       where: { id_rol },
     });
@@ -48,10 +45,8 @@ export class UsuarioService {
       throw new BadRequestException('Rol no válido');
     }
 
-    // 🔐 Hash del password
     const password_hash = await bcrypt.hash(password, 10);
 
-    // 🧱 Crear usuario
     const usuario = this.usuarioRepository.create({
       email,
       password_hash,
@@ -90,7 +85,7 @@ export class UsuarioService {
 
     if (!usuario) return null;
 
-    // Si actualiza password
+ 
     if (updateUsuarioDto.password) {
       usuario.password_hash = await bcrypt.hash(
         updateUsuarioDto.password,
@@ -114,4 +109,14 @@ export class UsuarioService {
 
     return await this.usuarioRepository.remove(usuario);
   }
+
+  async updateProfile(id: string, profile: string) {
+  const usuario = await this.usuarioRepository.findOne({ where: { id_usuario: id } });
+  if (!usuario) throw new NotFoundException('User not found');
+  usuario.profile = profile;
+  return this.usuarioRepository.save(usuario);
 }
+
+}
+
+

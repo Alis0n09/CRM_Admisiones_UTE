@@ -28,6 +28,9 @@ export class Usuario {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fecha_creacion: Date;
 
+  @Column({ nullable: true })
+  profile: string;
+
   // Roles (tabla intermedia usuario_roles)
   @ManyToMany(() => Rol, (rol) => rol.usuarios, { eager: true })
   @JoinTable({
