@@ -17,7 +17,7 @@ export class CarreraService {
     private readonly carreraRepository: Repository<Carrera>,
   ) {}
 
-  // Crear carrera
+ 
   async create(
     createCarreraDto: CreateCarreraDto,
   ): Promise<Carrera | null> {
@@ -30,7 +30,7 @@ export class CarreraService {
     }
   }
 
-  // Listar carreras con paginación
+
   async findAll(
     options: IPaginationOptions,
   ): Promise<Pagination<Carrera>> {
@@ -42,7 +42,7 @@ export class CarreraService {
     return paginate<Carrera>(queryBuilder, options);
   }
 
-  // Buscar una carrera por ID
+
   async findOne(id_carrera: string): Promise<Carrera | null> {
     try {
       return await this.carreraRepository.findOne({
@@ -54,7 +54,7 @@ export class CarreraService {
     }
   }
 
-  // Actualizar una carrera
+
   async update(
     id_carrera: string,
     updateCarreraDto: UpdateCarreraDto,
@@ -74,7 +74,7 @@ export class CarreraService {
     }
   }
 
-  // Eliminar una carrera
+  
   async remove(id_carrera: string): Promise<Carrera | null> {
     try {
       const carrera = await this.carreraRepository.findOne({

@@ -14,17 +14,17 @@ export class SeguimientoService {
     private readonly seguimientoRepository: Repository<Seguimiento>,
   ) {}
 
-  // Crear seguimiento
+ 
   async create(
     createSeguimientoDto: CreateSeguimientoDto,
   ): Promise<Seguimiento | null> {
     try {
-      // Separar id_contacto del resto
+   
       const { id_contacto, ...resto } = createSeguimientoDto;
 
       const seguimiento = this.seguimientoRepository.create({
         ...resto,
-        // Relación ManyToOne usando solo el id del contacto
+        
         contacto: { id_contacto } as any,
       });
 
@@ -35,12 +35,12 @@ export class SeguimientoService {
     }
   }
 
-  // Listar seguimientos con paginación
+  
   async findAll(options: IPaginationOptions): Promise<Pagination<Seguimiento>> {
     const queryBuilder =
       this.seguimientoRepository.createQueryBuilder('seguimiento');
 
-    // Traer también datos del contacto relacionado
+  
     queryBuilder
       .leftJoinAndSelect('seguimiento.contacto', 'contacto')
       .orderBy('seguimiento.fecha_contacto', 'DESC');
@@ -48,7 +48,7 @@ export class SeguimientoService {
     return paginate<Seguimiento>(queryBuilder, options);
   }
 
-  // Buscar un seguimiento por ID
+ 
   async findOne(id_seguimiento: string): Promise<Seguimiento | null> {
     try {
       return await this.seguimientoRepository.findOne({
@@ -61,7 +61,7 @@ export class SeguimientoService {
     }
   }
 
-  // Actualizar un seguimiento
+
   async update(
     id_seguimiento: string,
     updateSeguimientoDto: UpdateSeguimientoDto,
@@ -74,12 +74,12 @@ export class SeguimientoService {
 
       if (!seguimiento) return null;
 
-      // Si viene un nuevo id_contacto en el DTO, actualizamos la relación
+   
       if (updateSeguimientoDto.id_contacto) {
         (seguimiento as any).contacto = {
           id_contacto: updateSeguimientoDto.id_contacto,
         } as any;
-        // Quitamos id_contacto para que no dé conflicto con Object.assign
+   
         delete (updateSeguimientoDto as any).id_contacto;
       }
 
@@ -91,7 +91,7 @@ export class SeguimientoService {
     }
   }
 
-  // Eliminar un seguimiento
+  
   async remove(id_seguimiento: string): Promise<Seguimiento | null> {
     try {
       const seguimiento = await this.seguimientoRepository.findOne({
