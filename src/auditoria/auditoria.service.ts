@@ -53,17 +53,12 @@ export class AuditoriaService {
       .exec();
   }
 
-  // ======================
-  // FIND ONE by _id (Mongo ObjectId)
-  // ======================
+
   async findOne(id: string): Promise<Auditoria | null> {
     return await this.auditoriaModel.findById(id).exec();
   }
 
-  // ======================
-  // DELETE (si lo necesitas)
-  // Nota: en auditoría normalmente NO se borra, pero te lo dejo.
-  // ======================
+
   async remove(id: string): Promise<Auditoria | null> {
     return await this.auditoriaModel.findByIdAndDelete(id).exec();
   }

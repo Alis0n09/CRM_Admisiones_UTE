@@ -40,7 +40,7 @@ import { AuditoriaModule } from './auditoria/auditoria.module';
       // ssl: { rejectUnauthorized: false },
     }),
     MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://localhost:27017/crm_admisiones_ute', {
-      dbName: 'crm_admisiones_ute', // opcional, si quieres especificar el nombre
+      dbName: 'crm_admisiones_ute', 
     }),
     ContactoModule,
     TareaCrmModule,

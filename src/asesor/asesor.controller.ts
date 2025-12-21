@@ -24,14 +24,14 @@ import { Asesor } from './entities/asesor.entity';
 export class AsesorController {
   constructor(private readonly asesorService: AsesorService) {}
 
-  // Crear asesor
+  
   @Post()
   async create(@Body() dto: CreateAsesorDto) {
     const asesor = await this.asesorService.create(dto);
     return new SuccessResponseDto('Asesor creado con éxito', asesor);
   }
 
-  // Listar asesores con paginación
+
   @Get()
   async findAll(
     @Query() query: QueryDto,
@@ -46,7 +46,7 @@ export class AsesorController {
     return new SuccessResponseDto('Asesores obtenidos con éxito', result);
   }
 
-  // Buscar asesor por ID (string)
+ 
   @Get(':id_asesor')
   async findOne(@Param('id_asesor') id_asesor: string) {
     const asesor = await this.asesorService.findOne(id_asesor);
@@ -56,7 +56,7 @@ export class AsesorController {
     return new SuccessResponseDto('Asesor obtenido con éxito', asesor);
   }
 
-  // Actualizar asesor
+
   @Put(':id_asesor')
   async update(
     @Param('id_asesor') id_asesor: string,
@@ -69,7 +69,7 @@ export class AsesorController {
     return new SuccessResponseDto('Asesor actualizado con éxito', asesor);
   }
 
-  // Eliminar asesor
+  
   @Delete(':id_asesor')
   async remove(@Param('id_asesor') id_asesor: string) {
     const asesor = await this.asesorService.remove(id_asesor);

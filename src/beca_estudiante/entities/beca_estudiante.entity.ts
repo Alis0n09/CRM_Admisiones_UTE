@@ -22,7 +22,7 @@ export class BecaEstudiante {
   @JoinColumn({ name: 'id_beca' })
   beca: Beca;
 
-  // 🔗 DEPENDE DE ASPIRANTES
+
   @ManyToOne(() => Aspirante, {
     nullable: false,
     onDelete: 'CASCADE',

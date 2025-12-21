@@ -25,7 +25,7 @@ export class MatriculaService {
 
       const saved = await this.matriculaRepository.save(matricula);
 
-      // devolver completo (aspirante + contacto + carrera)
+
       return await this.matriculaRepository.findOne({
         where: { id_matricula: saved.id_matricula },
         relations: ['aspirante', 'aspirante.contacto', 'carrera'],
@@ -72,7 +72,7 @@ export class MatriculaService {
 
       if (!matricula) return null;
 
-      // Si vienen ids nuevos, actualizamos relaciones
+
       if ((updateMatriculaDto as any).id_aspirante) {
         (matricula as any).aspirante = {
           id_aspirante: (updateMatriculaDto as any).id_aspirante,
@@ -91,7 +91,7 @@ export class MatriculaService {
 
       const saved = await this.matriculaRepository.save(matricula);
 
-      // devolver completo actualizado
+
       return await this.matriculaRepository.findOne({
         where: { id_matricula: saved.id_matricula },
         relations: ['aspirante', 'aspirante.contacto', 'carrera'],

@@ -6,6 +6,7 @@ import {
   Param,
   Query,
   Delete,
+  Patch,
   NotFoundException,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -17,9 +18,7 @@ import { Auditoria } from './entities/auditoria.schema';
 export class AuditoriaController {
   constructor(private readonly auditoriaService: AuditoriaService) {}
 
-  // ======================
-  // CREATE
-  // ======================
+
   @Post()
   async create(@Body() body: Partial<Auditoria>) {
     const auditoria = await this.auditoriaService.create(body);
@@ -30,9 +29,7 @@ export class AuditoriaController {
     return new SuccessResponseDto('Auditoría creada con éxito', auditoria);
   }
 
-  // ======================
-  // FIND ALL (con filtros opcionales)
-  // ======================
+
   @Get()
   async findAll(
     @Query('usuario') usuario?: string,
@@ -54,9 +51,7 @@ export class AuditoriaController {
     return new SuccessResponseDto('Auditorías obtenidas con éxito', result);
   }
 
-  // ======================
-  // FIND ONE (por _id de Mongo)
-  // ======================
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const auditoria = await this.auditoriaService.findOne(id);
@@ -66,10 +61,7 @@ export class AuditoriaController {
     return new SuccessResponseDto('Auditoría obtenida con éxito', auditoria);
   }
 
-  // ======================
-  // DELETE (opcional)
-  // Nota: auditoría normalmente no se borra.
-  // ======================
+
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const auditoria = await this.auditoriaService.remove(id);
@@ -79,3 +71,5 @@ export class AuditoriaController {
     return new SuccessResponseDto('Auditoría eliminada con éxito', auditoria);
   }
 }
+
+

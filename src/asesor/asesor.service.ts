@@ -18,7 +18,7 @@ export class AsesorService {
     private readonly asesorRepository: Repository<Asesor>,
   ) {}
 
-  // Crear asesor
+
   async create(createAsesorDto: CreateAsesorDto): Promise<Asesor | null> {
     try {
       const asesor = this.asesorRepository.create(createAsesorDto);
@@ -29,7 +29,7 @@ export class AsesorService {
     }
   }
 
-  // Listar asesores con paginación
+
   async findAll(options: IPaginationOptions): Promise<Pagination<Asesor>> {
     const qb = this.asesorRepository.createQueryBuilder('asesor');
     qb.orderBy('asesor.nombres', 'ASC');
@@ -37,7 +37,7 @@ export class AsesorService {
     return paginate<Asesor>(qb, options);
   }
 
-  // Buscar un asesor por ID (string)
+
   async findOne(id_asesor: string): Promise<Asesor | null> {
     try {
       return await this.asesorRepository.findOne({
@@ -49,7 +49,7 @@ export class AsesorService {
     }
   }
 
-  // Actualizar asesor
+
   async update(
     id_asesor: string,
     updateDto: UpdateAsesorDto,
@@ -70,7 +70,7 @@ export class AsesorService {
     }
   }
 
-  // Eliminar asesor
+  
   async remove(id_asesor: string): Promise<Asesor | null> {
     try {
       const asesor = await this.asesorRepository.findOne({

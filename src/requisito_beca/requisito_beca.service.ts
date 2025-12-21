@@ -28,7 +28,7 @@ export class RequisitoBecaService {
         requisito,
       )) as unknown as RequisitoBeca;
 
-      // devolver completo (incluye beca)
+      
       return await this.requisitoBecaRepository.findOne({
         where: { id_requisito: saved.id_requisito },
         relations: ['beca'],
@@ -76,7 +76,7 @@ export class RequisitoBecaService {
 
       if (!requisito) return null;
 
-      // Si llega id_beca nuevo, actualizamos relación
+   
       if ((updateRequisitoBecaDto as any).id_beca) {
         (requisito as any).beca = {
           id_beca: (updateRequisitoBecaDto as any).id_beca,
@@ -90,7 +90,7 @@ export class RequisitoBecaService {
         requisito,
       )) as unknown as RequisitoBeca;
 
-      // devolver completo actualizado
+    
       return await this.requisitoBecaRepository.findOne({
         where: { id_requisito: saved.id_requisito },
         relations: ['beca'],
