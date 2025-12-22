@@ -1,98 +1,196 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# CRM + Sistema de Admisiones UTE
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend desarrollado en NestJS para la gestión de un CRM y el proceso de admisiones universitarias.  
+El sistema permite administrar usuarios, roles, contactos, aspirantes, postulaciones, exámenes de admisión, resultados, matrículas y becas, integrando autenticación mediante token JWT y CRUD completo.  
+El proyecto está organizado por módulos y fue probado mediante Postman.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Características principales
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- CRUD completo por módulos
+- Autenticación con JWT (Login → Token)
+- Gestión de usuarios y roles
+- Relaciones entre entidades (Contacto ↔ Aspirante, Postulación ↔ Carrera, etc.)
+- Auditoría de acciones
+- Subida de foto de perfil para usuarios (multipart/form-data)
+- Pruebas de endpoints mediante Postman
 
-## Project setup
+---
 
-```bash
-$ npm install
+## Módulos del proyecto (estructura en src/)
+
+- usuario – gestión de usuarios y perfil
+- rol – roles del sistema
+- asesor – módulo asesor
+- contacto – gestión de contactos CRM
+- contacto_aspirante – vínculo contacto ↔ aspirante
+- seguimiento – seguimiento del CRM
+- tarea_crm – tareas del CRM
+- aspirante – gestión de aspirantes
+- carrera – carreras universitarias
+- postulacion – postulaciones a carreras
+- documento_postulacion – documentos de postulaciones
+- examen_admision – exámenes de admisión
+- resultado_examen – resultados de exámenes
+- matricula – matrículas
+- beca – becas
+- beca_estudiante – relación beca ↔ estudiante
+- requisito_beca – requisitos de becas
+- auditoria – auditoría de acciones
+- mail – envío de correos
+- common – utilidades compartidas
+
+---
+
+## Tecnologías utilizadas
+
+- Node.js
+- NestJS
+- TypeScript
+- PostgreSQL
+- TypeORM
+- MongoDB (auditoría)
+- JWT (autenticación)
+- Multer (upload de archivos)
+- Postman (pruebas de API)
+
+---
+
+## Requisitos previos
+
+- Node.js (v18 o superior)
+- PostgreSQL
+- MongoDB (si se utiliza auditoría)
+- npm
+- Gestor de base de datos (pgAdmin o DBeaver)
+- Postman
+
+---
+
+## Instalación del proyecto
+
+Clonar el repositorio:
+
+```bash 
+git clone https://github.com/Alis0n09/CRM_Admisiones_UTE.git
 ```
 
-## Compile and run the project
+---
+## Instalación del proyecto
 
-```bash
-# development
-$ npm run start
+PORT=3000
 
-# watch mode
-$ npm run start:dev
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=TU_PASSWORD
+DB_NAME=crm_admisiones_ute
 
-# production mode
-$ npm run start:prod
-```
+JWT_SECRET=TU_SECRETO
+JWT_EXPIRES_IN=1d
+MONGO_URI=mongodb://localhost:27017/ 
+MAIL_USER=tu_correo@gmail.com  
+MAIL_PASS=tu_app_password      
 
-## Run tests
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+## Documentación de la API, Endopoints del sistema
 
-# test coverage
-$ npm run test:cov
-```
 
-## Deployment
+• Usuarios:  
+  /usuario (GET, POST)  
+  /usuario/:id (GET, PUT/PATCH, DELETE)
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+• Roles:  
+  /rol (GET, POST)  
+  /rol/:id (GET, PUT/PATCH, DELETE)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+• Asesores:  
+  /asesor (GET, POST)  
+  /asesor/:id (GET, PUT/PATCH, DELETE)
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+• Contactos:  
+  /contacto (GET, POST)  
+  /contacto/:id (GET, PUT/PATCH, DELETE)
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+• Contacto – Aspirante (vínculo):  
+  /contacto-aspirante (GET, POST)  
+  /contacto-aspirante/:id (GET, PUT/PATCH, DELETE)
 
-## Resources
+• Seguimiento CRM:  
+  /seguimiento (GET, POST)  
+  /seguimiento/:id (GET, PUT/PATCH, DELETE)
 
-Check out a few resources that may come in handy when working with NestJS:
+• Tareas CRM:  
+  /tarea-crm (GET, POST)  
+  /tarea-crm/:id (GET, PUT/PATCH, DELETE)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+• Aspirantes:  
+  /aspirante (GET, POST)  
+  /aspirante/:id (GET, PUT/PATCH, DELETE)
 
-## Support
+• Carreras:  
+  /carrera (GET, POST)  
+  /carrera/:id (GET, PUT/PATCH, DELETE)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+• Postulaciones:  
+  /postulacion (GET, POST)  
+  /postulacion/:id (GET, PUT/PATCH, DELETE)
 
-## Stay in touch
+• Documentos de Postulación:  
+  /documento-postulacion (GET, POST)  
+  /documento-postulacion/:id (GET, PUT/PATCH, DELETE)
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+• Exámenes de Admisión:  
+  /examen-admision (GET, POST)  
+  /examen-admision/:id (GET, PUT/PATCH, DELETE)
 
-## License
+• Resultados de Examen:  
+  /resultado-examen (GET, POST)  
+  /resultado-examen/:id (GET, PUT/PATCH, DELETE)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+• Matrículas:  
+  /matricula (GET, POST)  
+  /matricula/:id (GET, PUT/PATCH, DELETE)
+
+• Becas:  
+  /beca (GET, POST)  
+  /beca/:id (GET, PUT/PATCH, DELETE)
+
+• Becas – Estudiantes:  
+  /beca-estudiante (GET, POST)  
+  /beca-estudiante/:id (GET, PUT/PATCH, DELETE)
+
+• Requisitos de Beca:  
+  /requisito-beca (GET, POST)  
+  /requisito-beca/:id (GET, PUT/PATCH, DELETE)
+
+• Auditoría:  
+  /auditoria (GET)  
+  /auditoria/:id (GET)
+
+• Mail (notificaciones):  
+  /mail/send (POST)
+
+• Autenticación:  
+  /auth/login (POST)
+
+• Upload foto de perfil:  
+  /usuario/:id/profile (PUT)
+
+---
+
+## Colección en Postman:
+
+https://aliliseth2006-8d60d7d5-7752191.postman.co/workspace/CRM_Automatizacion_UTE~d14e8385-e225-4a5b-9ee0-d48ca7c308d4/collection/50759713-7af8f12f-5129-4717-9c59-55967b3059a3?action=share&creator=49903762
+
+---
+
+## Autores
+Alison Venegas
+Victoria Chicaiza
+Victoria Solórzano
+
+Universidad UTE – Tecnología en Desarrollo de Software
