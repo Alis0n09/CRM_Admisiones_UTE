@@ -10,9 +10,7 @@ export class AuditoriaService {
     private readonly auditoriaModel: Model<AuditoriaDocument>,
   ) {}
 
-  // ======================
-  // CREATE
-  // ======================
+
   async create(data: Partial<Auditoria>): Promise<Auditoria> {
     const auditoria = new this.auditoriaModel({
       ...data,
@@ -22,16 +20,14 @@ export class AuditoriaService {
     return await auditoria.save();
   }
 
-  // ======================
-  // FIND ALL (con filtros opcionales)
-  // ======================
+
   async findAll(filters?: {
     usuario?: string;
     modulo?: string;
     accion?: string;
     tabla_afectada?: string;
-    desde?: string; // ISO date string
-    hasta?: string; // ISO date string
+    desde?: string; 
+    hasta?: string; 
   }): Promise<Auditoria[]> {
     const query: any = {};
 
@@ -40,7 +36,7 @@ export class AuditoriaService {
     if (filters?.accion) query.accion = filters.accion;
     if (filters?.tabla_afectada) query.tabla_afectada = filters.tabla_afectada;
 
-    // rango de fechas
+    
     if (filters?.desde || filters?.hasta) {
       query.fecha_accion = {};
       if (filters.desde) query.fecha_accion.$gte = new Date(filters.desde);
