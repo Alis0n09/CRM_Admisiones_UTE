@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { Beca } from 'src/beca/entities/beca.entity';
-import { Aspirante } from 'src/aspirante/entities/aspirante.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 
 @Entity('becas_estudiantes')
 export class BecaEstudiante {
@@ -23,12 +23,12 @@ export class BecaEstudiante {
   beca: Beca;
 
 
-  @ManyToOne(() => Aspirante, {
+  @ManyToOne(() => Cliente, {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'id_aspirante' })
-  aspirante: Aspirante;
+  @JoinColumn({ name: 'id_cliente' })
+  cliente: Cliente;
 
   @Column({ type: 'date', default: () => 'CURRENT_DATE' })
   fecha_asignacion: Date;

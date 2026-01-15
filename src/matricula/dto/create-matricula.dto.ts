@@ -3,7 +3,7 @@ import { IsString, IsOptional, Length, IsDateString, IsUUID } from 'class-valida
 export class CreateMatriculaDto {
 
   @IsUUID()
-  id_aspirante: string;
+  id_cliente: string;
 
   @IsUUID()
   id_carrera: string;

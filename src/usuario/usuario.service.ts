@@ -1,122 +1,114 @@
-import {
-  Injectable,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Usuario } from './entities/usuario.entity';
+import { RolUsuario } from 'src/rol_usuario/entities/rol_usuario.entity';
 import { Rol } from 'src/rol/entities/rol.entity';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UsuarioService {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,
-
+    @InjectRepository(RolUsuario)
+    private readonly rolUsuarioRepository: Repository<RolUsuario>,
     @InjectRepository(Rol)
-    private readonly roleRepository: Repository<Rol>,
+    private readonly rolRepository: Repository<Rol>,
   ) {}
 
-
-  async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
-    const {
-      email,
-      password,
-      id_rol,
-      id_asesor,
-      id_aspirante,
-    } = createUsuarioDto;
-
-    if (id_asesor && id_aspirante) {
-      throw new BadRequestException(
-        'Un usuario no puede ser asesor y aspirante al mismo tiempo',
-      );
-    }
-
-    const rol = await this.roleRepository.findOne({
-      where: { id_rol },
-    });
-
-    if (!rol) {
-      throw new BadRequestException('Rol no válido');
-    }
-
-    const password_hash = await bcrypt.hash(password, 10);
+  async createEmpleadoUsuario(dto: CreateUsuarioDto, id_empleado: string) {
+    const password_hash = await bcrypt.hash(dto.password, 10);
 
     const usuario = this.usuarioRepository.create({
-      email,
+      email: dto.email,
       password_hash,
-      asesor: id_asesor ? ({ id_asesor } as any) : null,
-      aspirante: id_aspirante ? ({ id_aspirante } as any) : null,
-      roles: [rol],
+      activo: true,
+      id_empleado,
+      id_cliente: null,
     });
 
-    return await this.usuarioRepository.save(usuario);
+    const saved = await this.usuarioRepository.save(usuario);
+    await this.asignarRoles(saved, dto.rolesIds);
+    return saved;
   }
 
+  async createClienteUsuario(dto: CreateUsuarioDto, id_cliente: string) {
+    const password_hash = await bcrypt.hash(dto.password, 10);
 
-  async findAll(): Promise<Usuario[]> {
+    const usuario = this.usuarioRepository.create({
+      email: dto.email,
+      password_hash,
+      activo: true,
+      id_cliente,
+      id_empleado: null,
+    });
+
+    const saved = await this.usuarioRepository.save(usuario);
+    await this.asignarRoles(saved, dto.rolesIds);
+    return saved;
+  }
+
+  private async asignarRoles(usuario: Usuario, rolesIds?: string[]) {
+    if (rolesIds && rolesIds.length > 0) {
+      const rolUsuarios = rolesIds.map((idRol) => {
+        const ru = new RolUsuario();
+        ru.usuario = usuario;
+        ru.rol = { id_rol: idRol } as Rol;
+        return ru;
+      });
+      await this.rolUsuarioRepository.save(rolUsuarios);
+    }
+  }
+
+  async findByEmail(email: string): Promise<Usuario | null> {
+    return await this.usuarioRepository.findOne({
+      where: { email },
+      relations: ['empleado', 'cliente', 'rolUsuarios', 'rolUsuarios.rol'],
+    });
+  }
+
+  async findAll() {
     return await this.usuarioRepository.find({
-      relations: ['asesor', 'aspirante'],
+      relations: ['empleado', 'cliente', 'rolUsuarios', 'rolUsuarios.rol'],
     });
   }
 
-
-  async findOne(id_usuario: string): Promise<Usuario | null> {
+  async findOne(id_usuario: string) {
     return await this.usuarioRepository.findOne({
       where: { id_usuario },
-      relations: ['asesor', 'aspirante'],
+      relations: ['empleado', 'cliente', 'rolUsuarios', 'rolUsuarios.rol'],
     });
   }
 
-
-  async update(
-    id_usuario: string,
-    updateUsuarioDto: UpdateUsuarioDto,
-  ): Promise<Usuario | null> {
+  async update(id_usuario: string, dto: any) {
     const usuario = await this.usuarioRepository.findOne({
       where: { id_usuario },
-      relations: ['roles'],
     });
+    if (!usuario) throw new NotFoundException('Usuario no encontrado');
 
-    if (!usuario) return null;
+    const payload: any = { ...dto };
 
- 
-    if (updateUsuarioDto.password) {
-      usuario.password_hash = await bcrypt.hash(
-        updateUsuarioDto.password,
-        10,
-      );
-      delete updateUsuarioDto.password;
+    // Si viene password, lo convertimos a password_hash
+    if (payload.password) {
+      payload.password_hash = await bcrypt.hash(payload.password, 10);
+      delete payload.password; // 🔥 evita: Property "password" was not found
     }
 
-    Object.assign(usuario, updateUsuarioDto as any);
+    // rolesIds NO es columna en Usuario (si viene, lo quitamos para evitar error)
+    if (payload.rolesIds) {
+      delete payload.rolesIds;
+    }
 
-    return await this.usuarioRepository.save(usuario);
+    await this.usuarioRepository.update({ id_usuario }, payload);
+    return this.findOne(id_usuario);
   }
 
-
-  async remove(id_usuario: string): Promise<Usuario | null> {
-    const usuario = await this.usuarioRepository.findOne({
-      where: { id_usuario },
-    });
-
-    if (!usuario) return null;
-
-    return await this.usuarioRepository.remove(usuario);
+  async remove(id_usuario: string) {
+    const user = await this.findOne(id_usuario);
+    if (!user) return null;
+    await this.usuarioRepository.delete({ id_usuario });
+    return user;
   }
-
-  async updateProfile(id: string, profile: string) {
-  const usuario = await this.usuarioRepository.findOne({ where: { id_usuario: id } });
-  if (!usuario) throw new NotFoundException('User not found');
-  usuario.profile = profile;
-  return this.usuarioRepository.save(usuario);
 }
-
-}
-
-

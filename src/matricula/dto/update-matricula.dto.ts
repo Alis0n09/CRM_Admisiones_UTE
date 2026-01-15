@@ -3,7 +3,7 @@ import { IsString, IsOptional, Length, IsDateString, IsUUID } from 'class-valida
 export class UpdateMatriculaDto {
   @IsOptional()
   @IsUUID()
-  id_aspirante: string;
+  id_cliente: string;
   
   @IsOptional()
   @IsUUID()

@@ -13,7 +13,7 @@ export class UpdateBecaEstudianteDto {
 
   @IsOptional()
   @IsUUID()
-  id_aspirante?: string;
+  id_cliente?: string;
 
   @IsOptional()
   @IsString()

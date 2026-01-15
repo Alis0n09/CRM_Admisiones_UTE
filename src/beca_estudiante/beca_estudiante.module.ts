@@ -6,11 +6,11 @@ import { BecaEstudianteService } from './beca_estudiante.service';
 import { BecaEstudianteController } from './beca_estudiante.controller';
 
 import { Beca } from 'src/beca/entities/beca.entity';
-import { Aspirante } from 'src/aspirante/entities/aspirante.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([BecaEstudiante, Beca, Aspirante]),
+    TypeOrmModule.forFeature([BecaEstudiante, Beca, Cliente]),
   ],
   controllers: [BecaEstudianteController],
   providers: [BecaEstudianteService],

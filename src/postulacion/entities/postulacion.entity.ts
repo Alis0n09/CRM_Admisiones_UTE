@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Aspirante } from 'src/aspirante/entities/aspirante.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { Carrera } from 'src/carrera/entities/carrera.entity';
 
 @Entity('postulaciones')
@@ -14,9 +14,9 @@ export class Postulacion {
   @PrimaryGeneratedColumn('uuid')
   id_postulacion: string;
 
-  @ManyToOne(() => Aspirante, { nullable: false, onDelete: 'CASCADE', eager: true })
-  @JoinColumn({ name: 'id_aspirante' })
-  aspirante: Aspirante;
+  @ManyToOne(() => Cliente, { nullable: false, onDelete: 'CASCADE', eager: true })
+  @JoinColumn({ name: 'id_cliente' })
+  cliente: Cliente;
 
   @ManyToOne(() => Carrera, { nullable: false, eager: true })
   @JoinColumn({ name: 'id_carrera' })

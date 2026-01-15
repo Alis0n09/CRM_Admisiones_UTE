@@ -10,10 +10,10 @@ import {
 
 export class CreateTareaDto {
   @IsUUID()
-  id_asesor: string;
+  id_empleado: string;
 
   @IsUUID()
-  id_contacto: string;
+  id_cliente: string;
 
   @IsString()
   descripcion: string;

@@ -15,11 +15,11 @@ export class MatriculaService {
 
   async create(createMatriculaDto: CreateMatriculaDto): Promise<Matricula | null> {
     try {
-      const { id_aspirante, id_carrera, ...resto } = createMatriculaDto;
+      const { id_cliente, id_carrera, ...resto } = createMatriculaDto;
 
       const matricula = this.matriculaRepository.create({
         ...resto,
-        aspirante: { id_aspirante } as any,
+        cliente: { id_cliente } as any,
         carrera: { id_carrera } as any,
       });
 
@@ -28,7 +28,7 @@ export class MatriculaService {
 
       return await this.matriculaRepository.findOne({
         where: { id_matricula: saved.id_matricula },
-        relations: ['aspirante', 'aspirante.contacto', 'carrera'],
+        relations: ['cliente', 'carrera'],
       });
     } catch (error) {
       console.error('Error al crear la matricula', error);
@@ -40,8 +40,7 @@ export class MatriculaService {
     const queryBuilder = this.matriculaRepository.createQueryBuilder('matricula');
 
     queryBuilder
-      .leftJoinAndSelect('matricula.aspirante', 'aspirante')
-      .leftJoinAndSelect('aspirante.contacto', 'contacto')
+      .leftJoinAndSelect('matricula.cliente', 'cliente')
       .leftJoinAndSelect('matricula.carrera', 'carrera')
       .orderBy('matricula.fecha_matricula', 'DESC');
 
@@ -52,7 +51,7 @@ export class MatriculaService {
     try {
       return await this.matriculaRepository.findOne({
         where: { id_matricula },
-        relations: ['aspirante', 'aspirante.contacto', 'carrera'],
+        relations: ['cliente', 'carrera'],
       });
     } catch (error) {
       console.error('Error al buscar la matricula', error);
@@ -67,17 +66,17 @@ export class MatriculaService {
     try {
       const matricula = await this.matriculaRepository.findOne({
         where: { id_matricula },
-        relations: ['aspirante', 'aspirante.contacto', 'carrera'],
+        relations: ['cliente', 'carrera'],
       });
 
       if (!matricula) return null;
 
 
-      if ((updateMatriculaDto as any).id_aspirante) {
-        (matricula as any).aspirante = {
-          id_aspirante: (updateMatriculaDto as any).id_aspirante,
+      if ((updateMatriculaDto as any).id_cliente) {
+        (matricula as any).cliente = {
+          id_cliente: (updateMatriculaDto as any).id_cliente,
         } as any;
-        delete (updateMatriculaDto as any).id_aspirante;
+        delete (updateMatriculaDto as any).id_cliente;
       }
 
       if ((updateMatriculaDto as any).id_carrera) {
@@ -94,7 +93,7 @@ export class MatriculaService {
 
       return await this.matriculaRepository.findOne({
         where: { id_matricula: saved.id_matricula },
-        relations: ['aspirante', 'aspirante.contacto', 'carrera'],
+        relations: ['cliente', 'carrera'],
       });
     } catch (error) {
       console.error('Error al actualizar la matricula', error);
@@ -106,7 +105,7 @@ export class MatriculaService {
     try {
       const matricula = await this.matriculaRepository.findOne({
         where: { id_matricula },
-        relations: ['aspirante', 'aspirante.contacto', 'carrera'],
+        relations: ['cliente', 'carrera'],
       });
 
       if (!matricula) return null;

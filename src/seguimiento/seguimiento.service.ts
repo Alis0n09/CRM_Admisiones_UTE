@@ -5,7 +5,7 @@ import { paginate, IPaginationOptions, Pagination} from 'nestjs-typeorm-paginate
 import { Seguimiento } from './entities/seguimiento.entity';
 import { CreateSeguimientoDto } from './dto/create-seguimiento.dto';
 import { UpdateSeguimientoDto } from './dto/update-seguimiento.dto';
-import { Contacto } from 'src/contacto/entities/contacto.entity';
+
 
 @Injectable()
 export class SeguimientoService {
@@ -20,12 +20,12 @@ export class SeguimientoService {
   ): Promise<Seguimiento | null> {
     try {
    
-      const { id_contacto, ...resto } = createSeguimientoDto;
+      const { id_cliente, ...resto } = createSeguimientoDto;
 
       const seguimiento = this.seguimientoRepository.create({
         ...resto,
         
-        contacto: { id_contacto } as any,
+        cliente: { id_cliente } as any,
       });
 
       return await this.seguimientoRepository.save(seguimiento);
@@ -42,7 +42,7 @@ export class SeguimientoService {
 
   
     queryBuilder
-      .leftJoinAndSelect('seguimiento.contacto', 'contacto')
+      .leftJoinAndSelect('seguimiento.cliente', 'cliente')
       .orderBy('seguimiento.fecha_contacto', 'DESC');
 
     return paginate<Seguimiento>(queryBuilder, options);
@@ -53,7 +53,7 @@ export class SeguimientoService {
     try {
       return await this.seguimientoRepository.findOne({
         where: { id_seguimiento },
-        relations: ['contacto'],
+        relations: ['cliente'],
       });
     } catch (error) {
       console.error('Error al buscar el seguimiento', error);
@@ -69,18 +69,18 @@ export class SeguimientoService {
     try {
       const seguimiento = await this.seguimientoRepository.findOne({
         where: { id_seguimiento },
-        relations: ['contacto'],
+        relations: ['cliente'],
       });
 
       if (!seguimiento) return null;
 
    
-      if (updateSeguimientoDto.id_contacto) {
-        (seguimiento as any).contacto = {
-          id_contacto: updateSeguimientoDto.id_contacto,
+      if (updateSeguimientoDto.id_cliente) {
+        (seguimiento as any).cliente = {
+          id_cliente: updateSeguimientoDto.id_cliente,
         } as any;
    
-        delete (updateSeguimientoDto as any).id_contacto;
+        delete (updateSeguimientoDto as any).id_cliente;
       }
 
       Object.assign(seguimiento, updateSeguimientoDto);

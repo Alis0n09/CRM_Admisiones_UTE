@@ -1,23 +1,14 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToMany,
-} from 'typeorm';
-import { Usuario } from 'src/usuario/entities/usuario.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { RolUsuario } from 'src/rol_usuario/entities/rol_usuario.entity';
 
 @Entity('roles')
 export class Rol {
-
   @PrimaryGeneratedColumn('uuid')
   id_rol: string;
 
-  @Column({ length: 30, unique: true })
-  nombre: string; // ADMIN, ASESOR, ASPIRANTE
+  @Column({ length: 50, unique: true })
+  nombre: string;
 
-  @Column({ type: 'text', nullable: true })
-  descripcion?: string;
-
-  @ManyToMany(() => Usuario, (usuario) => usuario.roles)
-  usuarios: Usuario[];
+  @OneToMany(() => RolUsuario, (rolUsuario) => rolUsuario.rol, { cascade: true })
+  rolUsuarios: RolUsuario[];
 }
