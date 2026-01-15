@@ -3,7 +3,7 @@ import { IsOptional, IsString, Length, IsUUID, IsDateString } from 'class-valida
 export class CreatePostulacionDto {
 
   @IsUUID()
-  id_aspirante: string;
+  id_cliente: string;
 
   @IsUUID()
   id_carrera: string;

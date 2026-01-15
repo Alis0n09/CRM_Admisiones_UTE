@@ -3,15 +3,12 @@ import {
   IsDateString,
   IsOptional,
 } from 'class-validator';
-
-
-
 export class UpdateTareaDto {
   @IsString ()
-  id_asesor: string;
+  id_empleado: string;
 
   @IsString ()
-  id_contacto: string;
+  id_cliente: string;
   
   @IsOptional()
   @IsString()

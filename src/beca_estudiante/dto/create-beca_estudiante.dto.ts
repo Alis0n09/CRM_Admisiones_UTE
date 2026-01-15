@@ -11,7 +11,7 @@ export class CreateBecaEstudianteDto {
   id_beca: string;
 
   @IsUUID()
-  id_aspirante: string;
+  id_cliente: string;
 
   @IsString()
   periodo_academico: string;

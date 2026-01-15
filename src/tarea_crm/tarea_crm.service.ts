@@ -7,8 +7,8 @@ import { TareaCrm } from './entities/tarea_crm.entity';
 import { CreateTareaDto } from './dto/create-tarea_crm.dto'; 
 import { UpdateTareaDto } from './dto/update-tarea_crm.dto'; 
 
-import { Asesor } from 'src/asesor/entities/asesor.entity';
-import { Contacto } from 'src/contacto/entities/contacto.entity';
+import { Empleado } from 'src/empleado/entities/empleado.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 
 @Injectable()
 export class TareaCrmService {
@@ -17,15 +17,14 @@ export class TareaCrmService {
     private readonly tareaRepository: Repository<TareaCrm>,
   ) {}
 
-  
   async create(createTareaDto: CreateTareaDto): Promise<TareaCrm | null> {
     try {
-      const { id_asesor, id_contacto, ...resto } = createTareaDto;
+      const { id_empleado, id_cliente, ...resto } = createTareaDto;
 
       const tarea = this.tareaRepository.create({
         ...resto,
-        asesor: { id_asesor } as Asesor,
-        contacto: { id_contacto } as Contacto,
+        empleado: { id_empleado } as Empleado,
+        cliente: { id_cliente } as Cliente,
       });
 
       return await this.tareaRepository.save(tarea);
@@ -35,24 +34,22 @@ export class TareaCrmService {
     }
   }
 
- 
   async findAll(options: IPaginationOptions): Promise<Pagination<TareaCrm>> {
     const queryBuilder = this.tareaRepository.createQueryBuilder('tarea');
 
     queryBuilder
-      .leftJoinAndSelect('tarea.asesor', 'asesor')
-      .leftJoinAndSelect('tarea.contacto', 'contacto')
+      .leftJoinAndSelect('tarea.empleado', 'empleado')
+      .leftJoinAndSelect('tarea.cliente', 'cliente')
       .orderBy('tarea.fecha_asignacion', 'DESC');
 
     return paginate<TareaCrm>(queryBuilder, options);
   }
 
-
   async findOne(id_tarea: string): Promise<TareaCrm | null> {
     try {
       return await this.tareaRepository.findOne({
         where: { id_tarea },
-        relations: ['asesor', 'contacto'],
+        relations: ['empleado', 'cliente'],
       });
     } catch (error) {
       console.error('Error al buscar la tarea', error);
@@ -60,7 +57,6 @@ export class TareaCrmService {
     }
   }
 
- 
   async update(
     id_tarea: string,
     updateTareaDto: UpdateTareaDto,
@@ -68,20 +64,19 @@ export class TareaCrmService {
     try {
       const tarea = await this.tareaRepository.findOne({
         where: { id_tarea },
-        relations: ['asesor', 'contacto'],
+        relations: ['empleado', 'cliente'],
       });
 
       if (!tarea) return null;
 
-      
-      if (updateTareaDto.id_asesor) {
-        (tarea as any).asesor = { id_asesor: updateTareaDto.id_asesor } as Asesor;
-        delete (updateTareaDto as any).id_asesor;
+      if (updateTareaDto.id_empleado) {
+        (tarea as any).empleado = { id_empleado: updateTareaDto.id_empleado } as Empleado;
+        delete (updateTareaDto as any).id_empleado;
       }
 
-      if (updateTareaDto.id_contacto) {
-        (tarea as any).contacto = { id_contacto: updateTareaDto.id_contacto } as Contacto;
-        delete (updateTareaDto as any).id_contacto;
+      if (updateTareaDto.id_cliente) {
+        (tarea as any).cliente = { id_cliente: updateTareaDto.id_cliente } as Cliente;
+        delete (updateTareaDto as any).id_cliente;
       }
 
       Object.assign(tarea, updateTareaDto);
@@ -93,7 +88,6 @@ export class TareaCrmService {
     }
   }
 
- 
   async remove(id_tarea: string): Promise<TareaCrm | null> {
     try {
       const tarea = await this.tareaRepository.findOne({
@@ -109,4 +103,3 @@ export class TareaCrmService {
     }
   }
 }
-

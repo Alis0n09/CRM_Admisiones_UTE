@@ -2,14 +2,13 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToMany,
-  JoinTable,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
-import { Rol } from 'src/rol/entities/rol.entity';
-import { Asesor } from 'src/asesor/entities/asesor.entity';
-import { Aspirante } from 'src/aspirante/entities/aspirante.entity';
+import { Empleado } from 'src/empleado/entities/empleado.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { RolUsuario } from 'src/rol_usuario/entities/rol_usuario.entity';
 
 @Entity('usuarios')
 export class Usuario {
@@ -31,22 +30,20 @@ export class Usuario {
   @Column({ nullable: true })
   profile: string;
 
+  @Column({ type: 'uuid', nullable: true })
+  id_empleado?: string | null;
 
-  @ManyToMany(() => Rol, (rol) => rol.usuarios, { eager: true })
-  @JoinTable({
-    name: 'usuario_roles',
-    joinColumn: { name: 'id_usuario', referencedColumnName: 'id_usuario' },
-    inverseJoinColumn: { name: 'id_rol', referencedColumnName: 'id_rol' },
-  })
-  roles: Rol[];
+  @Column({ type: 'uuid', nullable: true })
+  id_cliente?: string | null;
 
+  @OneToOne(() => Empleado, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'id_empleado' })
+  empleado?: Empleado;
 
-  @OneToOne(() => Asesor, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'id_asesor' })
-  asesor?: Asesor;
+  @OneToOne(() => Cliente, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'id_cliente' })
+  cliente?: Cliente;
 
-  
-  @OneToOne(() => Aspirante, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'id_aspirante' })
-  aspirante?: Aspirante;
+  @OneToMany(() => RolUsuario, (rolUsuario) => rolUsuario.usuario, { cascade: true })
+  rolUsuarios: RolUsuario[];
 }

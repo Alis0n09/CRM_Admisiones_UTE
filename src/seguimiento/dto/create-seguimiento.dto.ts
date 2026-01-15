@@ -2,7 +2,7 @@ import { IsString, IsOptional, IsDateString, Length, IsUUID} from 'class-validat
 
 export class CreateSeguimientoDto {
   @IsUUID()
-  id_contacto: string;
+  id_cliente: string;
 
   @IsOptional()
   @IsDateString()

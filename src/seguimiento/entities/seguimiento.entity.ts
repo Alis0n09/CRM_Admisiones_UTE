@@ -1,15 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn,
 } from 'typeorm';
-import { Contacto } from 'src/contacto/entities/contacto.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 
 @Entity('seguimientos')
 export class Seguimiento {
   @PrimaryGeneratedColumn('uuid')
   id_seguimiento: string;
 
-  @ManyToOne(() => Contacto, { onDelete: 'CASCADE'})
-  @JoinColumn({ name: 'id_contacto' }) 
-  contacto: Contacto;
+  @ManyToOne(() => Cliente, { onDelete: 'CASCADE'})
+  @JoinColumn({ name: 'id_cliente' }) 
+  cliente: Cliente;
 
   @Column({ type: 'date', nullable: true })
   fecha_contacto: Date;

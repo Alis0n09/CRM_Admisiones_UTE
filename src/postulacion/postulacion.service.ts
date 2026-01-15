@@ -17,11 +17,11 @@ export class PostulacionService {
  
 async create(createPostulacionDto: CreatePostulacionDto): Promise<Postulacion | null> {
   try {
-    const { id_aspirante, id_carrera, ...resto } = createPostulacionDto;
+    const { id_cliente, id_carrera, ...resto } = createPostulacionDto;
 
     const postulacion = this.postulacionRepository.create({
       ...resto,
-      aspirante: { id_aspirante } as any,
+      cliente: { id_cliente } as any,
       carrera: { id_carrera } as any,
     });
 
@@ -30,7 +30,7 @@ async create(createPostulacionDto: CreatePostulacionDto): Promise<Postulacion | 
     
     return await this.postulacionRepository.findOne({
       where: { id_postulacion: saved.id_postulacion },
-      relations: ['aspirante', 'carrera'],
+      relations: ['cliente', 'carrera'],
     });
   } catch (error) {
     console.error('Error al crear la postulacion', error);
@@ -43,7 +43,7 @@ async findAll(options: IPaginationOptions): Promise<Pagination<Postulacion>> {
   const queryBuilder = this.postulacionRepository.createQueryBuilder('postulacion');
 
   queryBuilder
-    .leftJoinAndSelect('postulacion.aspirante', 'aspirante')
+    .leftJoinAndSelect('postulacion.cliente', 'cliente')
     .leftJoinAndSelect('postulacion.carrera', 'carrera')
     .orderBy('postulacion.fecha_postulacion', 'DESC');
 
@@ -55,7 +55,7 @@ async findOne(id_postulacion: string): Promise<Postulacion | null> {
   try {
     return await this.postulacionRepository.findOne({
       where: { id_postulacion },
-      relations: ['aspirante', 'carrera'],
+      relations: ['cliente', 'carrera'],
     });
   } catch (error) {
     console.error('Error al buscar la postulacion', error);

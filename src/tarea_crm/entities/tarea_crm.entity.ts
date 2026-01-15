@@ -5,8 +5,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Asesor } from 'src/asesor/entities/asesor.entity';
-import { Contacto } from 'src/contacto/entities/contacto.entity';
+import { Empleado } from 'src/empleado/entities/empleado.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 
 @Entity('tareas_crm')
 export class TareaCrm {
@@ -14,13 +14,13 @@ export class TareaCrm {
   @PrimaryGeneratedColumn('uuid')
   id_tarea: string;
 
-  @ManyToOne(() => Asesor, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'id_asesor' })
-  asesor: Asesor;
+  @ManyToOne(() => Empleado, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'id_empleado' })
+  empleado: Empleado;
 
-  @ManyToOne(() => Contacto, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'id_contacto' })
-  contacto: Contacto;
+  @ManyToOne(() => Cliente, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'id_cliente' })
+  cliente: Cliente;
 
   @Column({ type: 'text', nullable: true })
   descripcion: string;
