@@ -26,7 +26,7 @@ export class BecaEstudianteService {
     private readonly clienteRepo: Repository<Cliente>,
   ) {}
 
-
+  // ✅ CREATE: asigna una beca a un estudiante (cliente)
   async create(dto: CreateBecaEstudianteDto) {
     const beca = await this.becaRepo.findOneBy({ id_beca: dto.id_beca });
     if (!beca) throw new BadRequestException('La beca no existe');
@@ -34,8 +34,7 @@ export class BecaEstudianteService {
     const cliente = await this.clienteRepo.findOneBy({
       id_cliente: dto.id_cliente,
     });
-    if (!cliente)
-      throw new BadRequestException('El cliente no existe');
+    if (!cliente) throw new BadRequestException('El cliente no existe');
 
     const entity = this.becaEstRepo.create({
       beca,
@@ -51,14 +50,22 @@ export class BecaEstudianteService {
     return this.becaEstRepo.save(entity);
   }
 
-
+  // ✅ READ ALL: admin/asesor ven todo
   findAll() {
     return this.becaEstRepo.find({
       relations: ['beca', 'cliente'],
     });
   }
 
+  // ✅ READ ALL (PRO): aspirante ve solo lo suyo (por id_cliente)
+  findAllByCliente(id_cliente: string) {
+    return this.becaEstRepo.find({
+      where: { cliente: { id_cliente } },
+      relations: ['beca', 'cliente'],
+    });
+  }
 
+  // ✅ READ ONE: admin/asesor ven cualquiera
   async findOne(id: string) {
     const row = await this.becaEstRepo.findOne({
       where: { id_beca_estudiante: id },
@@ -71,7 +78,23 @@ export class BecaEstudianteService {
     return row;
   }
 
+  // ✅ READ ONE (PRO): aspirante solo si es suya
+  async findOneForCliente(id: string, id_cliente: string) {
+    const row = await this.becaEstRepo.findOne({
+      where: {
+        id_beca_estudiante: id,
+        cliente: { id_cliente },
+      },
+      relations: ['beca', 'cliente'],
+    });
 
+    if (!row)
+      throw new NotFoundException('Asignación de beca no encontrada');
+
+    return row;
+  }
+
+  // ✅ UPDATE
   async update(id: string, dto: UpdateBecaEstudianteDto) {
     const row = await this.findOne(id);
 
@@ -85,17 +108,12 @@ export class BecaEstudianteService {
       const cliente = await this.clienteRepo.findOneBy({
         id_cliente: dto.id_cliente,
       });
-      if (!cliente)
-        throw new BadRequestException('El cliente no existe');
+      if (!cliente) throw new BadRequestException('El cliente no existe');
       row.cliente = cliente;
     }
 
-    if (dto.periodo_academico)
-      row.periodo_academico = dto.periodo_academico;
-
-    if (dto.monto_otorgado)
-      row.monto_otorgado = dto.monto_otorgado;
-
+    if (dto.periodo_academico) row.periodo_academico = dto.periodo_academico;
+    if (dto.monto_otorgado) row.monto_otorgado = dto.monto_otorgado;
     if (dto.estado) row.estado = dto.estado;
 
     if (dto.fecha_asignacion)
@@ -104,7 +122,7 @@ export class BecaEstudianteService {
     return this.becaEstRepo.save(row);
   }
 
-  
+  // ✅ DELETE
   async remove(id: string) {
     const row = await this.findOne(id);
     await this.becaEstRepo.remove(row);
