@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
+import { identity } from 'rxjs';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -22,6 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       id_usuario: payload.sub,
       email: payload.email,
       roles: payload.roles ?? [], // asegurar array
+      id_cliente: payload.id_cliente ?? null,
     };
   }
 }

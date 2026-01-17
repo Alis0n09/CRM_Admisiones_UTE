@@ -9,6 +9,7 @@ import {
   Query,
   NotFoundException,
   InternalServerErrorException,
+  UseGuards,
 } from '@nestjs/common';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { CarreraService } from './carrera.service';
@@ -18,11 +19,18 @@ import { SuccessResponseDto } from 'src/common/dto/response.dto';
 import { QueryDto } from 'src/common/dto/query.dto';
 import { Carrera } from './entities/carrera.entity';
 
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+
 @Controller('carrera')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CarreraController {
   constructor(private readonly carreraService: CarreraService) {}
 
+  // ✅ CREATE → solo ADMIN
   @Post()
+  @Roles('ADMIN')
   async create(@Body() dto: CreateCarreraDto) {
     const carrera = await this.carreraService.create(dto);
     if (!carrera) {
@@ -33,7 +41,9 @@ export class CarreraController {
     return new SuccessResponseDto('Carrera creada con éxito', carrera);
   }
 
+  // ✅ READ ALL → todos
   @Get()
+  @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findAll(
     @Query() query: QueryDto,
   ): Promise<SuccessResponseDto<Pagination<Carrera>>> {
@@ -52,7 +62,9 @@ export class CarreraController {
     return new SuccessResponseDto('Carreras obtenidas con éxito', result);
   }
 
+  // ✅ READ ONE → todos
   @Get(':id_carrera')
+  @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findOne(@Param('id_carrera') id_carrera: string) {
     const carrera = await this.carreraService.findOne(id_carrera);
     if (!carrera) {
@@ -61,7 +73,9 @@ export class CarreraController {
     return new SuccessResponseDto('Carrera obtenida con éxito', carrera);
   }
 
+  // ✅ UPDATE → solo ADMIN
   @Put(':id_carrera')
+  @Roles('ADMIN')
   async update(
     @Param('id_carrera') id_carrera: string,
     @Body() dto: UpdateCarreraDto,
@@ -76,7 +90,9 @@ export class CarreraController {
     );
   }
 
+  // ✅ DELETE → solo ADMIN
   @Delete(':id_carrera')
+  @Roles('ADMIN')
   async remove(@Param('id_carrera') id_carrera: string) {
     const carrera = await this.carreraService.remove(id_carrera);
     if (!carrera) {

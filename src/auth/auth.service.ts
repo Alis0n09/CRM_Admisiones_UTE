@@ -23,6 +23,7 @@ export class AuthService {
       sub: usuario.id_usuario,
       email: usuario.email,
       roles, // array de roles
+      id_cliente: usuario.id_cliente ?? null,
     };
 
     return { access_token: this.jwtService.sign(payload) };
