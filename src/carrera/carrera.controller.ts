@@ -28,7 +28,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 export class CarreraController {
   constructor(private readonly carreraService: CarreraService) {}
 
-  // ✅ CREATE → solo ADMIN
+
   @Post()
   @Roles('ADMIN')
   async create(@Body() dto: CreateCarreraDto) {
@@ -41,7 +41,7 @@ export class CarreraController {
     return new SuccessResponseDto('Carrera creada con éxito', carrera);
   }
 
-  // ✅ READ ALL → todos
+
   @Get()
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findAll(
@@ -62,7 +62,7 @@ export class CarreraController {
     return new SuccessResponseDto('Carreras obtenidas con éxito', result);
   }
 
-  // ✅ READ ONE → todos
+  
   @Get(':id_carrera')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findOne(@Param('id_carrera') id_carrera: string) {
@@ -73,7 +73,7 @@ export class CarreraController {
     return new SuccessResponseDto('Carrera obtenida con éxito', carrera);
   }
 
-  // ✅ UPDATE → solo ADMIN
+
   @Put(':id_carrera')
   @Roles('ADMIN')
   async update(
@@ -90,7 +90,7 @@ export class CarreraController {
     );
   }
 
-  // ✅ DELETE → solo ADMIN
+  
   @Delete(':id_carrera')
   @Roles('ADMIN')
   async remove(@Param('id_carrera') id_carrera: string) {
