@@ -24,16 +24,13 @@ import { Roles } from 'src/decorators/roles.decorator';
 export class BecaEstudianteController {
   constructor(private readonly service: BecaEstudianteService) {}
 
-  // ✅ Asignar beca a estudiante: Admin y Asesor
   @Post()
   @Roles('ADMIN', 'ASESOR')
   create(@Body() dto: CreateBecaEstudianteDto) {
     return this.service.create(dto);
   }
 
-  // ✅ Ver asignaciones:
-  // - Admin/Asesor ven todo
-  // - Aspirante ve solo lo suyo
+
   @Get()
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   findAll(@Req() req: any) {
@@ -49,9 +46,7 @@ export class BecaEstudianteController {
     return this.service.findAll();
   }
 
-  // ✅ Ver una asignación:
-  // - Admin/Asesor ven cualquiera
-  // - Aspirante solo si es suya
+
   @Get(':id')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   findOne(@Param('id') id: string, @Req() req: any) {
@@ -67,14 +62,12 @@ export class BecaEstudianteController {
     return this.service.findOne(id);
   }
 
-  // ✅ Update: Admin y Asesor
   @Put(':id')
   @Roles('ADMIN', 'ASESOR')
   update(@Param('id') id: string, @Body() dto: UpdateBecaEstudianteDto) {
     return this.service.update(id, dto);
   }
 
-  // ✅ Delete: solo Admin (recomendado)
   @Delete(':id')
   @Roles('ADMIN')
   remove(@Param('id') id: string) {

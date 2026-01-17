@@ -30,7 +30,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
-  // ✅ CREATE: Admin y Asesor (normalmente el aspirante no crea "clientes" directo)
+
   @Post()
   @Roles('ADMIN', 'ASESOR')
   async create(@Body() dto: CreateClienteDto) {
@@ -38,7 +38,7 @@ export class ClienteController {
     return new SuccessResponseDto('Cliente creado con éxito', cliente);
   }
 
-  // ✅ READ ALL: SOLO Admin y Asesor (por privacidad)
+ 
   @Get()
   @Roles('ADMIN', 'ASESOR')
   async findAll(
@@ -54,9 +54,7 @@ export class ClienteController {
     return new SuccessResponseDto('Clientes obtenidos con éxito', result);
   }
 
-  // ✅ READ ONE:
-  // - Admin/Asesor: pueden ver cualquiera
-  // - Aspirante: SOLO su propio cliente (id_cliente del token)
+
   @Get(':id_cliente')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findOne(@Param('id_cliente') id_cliente: string, @Req() req: any) {
@@ -75,9 +73,7 @@ export class ClienteController {
     return new SuccessResponseDto('Cliente obtenido con éxito', cliente);
   }
 
-  // ✅ UPDATE:
-  // - Admin/Asesor: actualizan cualquiera
-  // - Aspirante: SOLO su propio cliente
+
   @Put(':id_cliente')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async update(
@@ -100,7 +96,6 @@ export class ClienteController {
     return new SuccessResponseDto('Cliente actualizado con éxito', cliente);
   }
 
-  // ✅ DELETE: solo Admin (recomendado)
   @Delete(':id_cliente')
   @Roles('ADMIN')
   async remove(@Param('id_cliente') id_cliente: string) {
