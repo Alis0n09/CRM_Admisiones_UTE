@@ -25,7 +25,6 @@ export class RolesGuard implements CanActivate {
 
     if (!user) throw new ForbiddenException('No autenticado');
 
-    // ✅ user.roles array o user.role string
     const rawUserRoles = user.roles ?? user.role ?? user.rol ?? [];
     const userRoles = (Array.isArray(rawUserRoles) ? rawUserRoles : [rawUserRoles])
       .filter(Boolean)
@@ -36,7 +35,6 @@ export class RolesGuard implements CanActivate {
     const ok = required.some((role) => userRoles.includes(role));
     
     if (!ok) {
-      // Debug: Log para diagnosticar el problema
       console.log('🚫 RolesGuard - Acceso denegado:', {
         requiredRoles,
         userRoles,

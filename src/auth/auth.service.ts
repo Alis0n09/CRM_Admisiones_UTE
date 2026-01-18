@@ -17,7 +17,6 @@ export class AuthService {
     const ok = await bcrypt.compare(password, usuario.password_hash);
     if (!ok) throw new UnauthorizedException('Credenciales incorrectas');
 
-    // Debug: Verificar carga de roles
     console.log('Usuario encontrado:', {
       email: usuario.email,
       id_usuario: usuario.id_usuario,
@@ -28,7 +27,6 @@ export class AuthService {
       })) ?? []
     });
 
-    // Extraer roles asegurándonos de que rol.rol.nombre existe
     const roles = usuario.rolUsuarios
       ?.filter((ru) => ru.rol && ru.rol.nombre)
       ?.map((ru) => ru.rol.nombre)
@@ -39,7 +37,7 @@ export class AuthService {
     const payload = {
       sub: usuario.id_usuario,
       email: usuario.email,
-      roles, // array de roles
+      roles,
       id_cliente: usuario.id_cliente ?? null,
       id_empleado: usuario.id_empleado ?? usuario.empleado?.id_empleado ?? null,
     };

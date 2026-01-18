@@ -16,7 +16,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     if (!payload) throw new UnauthorizedException('Token inválido');
 
-    // ✅ Soporta: payload.roles (array) | payload.roles (string) | payload.role (string)
     const rawRoles =
       payload.roles ?? payload.role ?? payload.rol ?? [];
 
@@ -24,7 +23,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ? rawRoles
       : [rawRoles];
 
-    // ✅ normaliza: "asesor" -> "ASESOR"
     const normalizedRoles = roles
       .filter(Boolean)
       .map((r: any) => String(r).toUpperCase());
@@ -32,7 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return {
       id_usuario: payload.sub,
       email: payload.email,
-      roles: normalizedRoles, // ✅ siempre array y normalizado
+      roles: normalizedRoles,
       id_cliente: payload.id_cliente ?? null,
       id_empleado: payload.id_empleado ?? null, 
     };

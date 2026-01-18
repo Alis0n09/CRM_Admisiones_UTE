@@ -6,7 +6,6 @@ import { Seguimiento } from './entities/seguimiento.entity';
 import { CreateSeguimientoDto } from './dto/create-seguimiento.dto';
 import { UpdateSeguimientoDto } from './dto/update-seguimiento.dto';
 
-
 @Injectable()
 export class SeguimientoService {
   constructor(
@@ -14,17 +13,14 @@ export class SeguimientoService {
     private readonly seguimientoRepository: Repository<Seguimiento>,
   ) {}
 
- 
   async create(
     createSeguimientoDto: CreateSeguimientoDto,
   ): Promise<Seguimiento | null> {
     try {
-   
       const { id_cliente, ...resto } = createSeguimientoDto;
 
       const seguimiento = this.seguimientoRepository.create({
         ...resto,
-        
         cliente: { id_cliente } as any,
       });
 
@@ -35,12 +31,10 @@ export class SeguimientoService {
     }
   }
 
-  
   async findAll(options: IPaginationOptions & { id_cliente?: string }): Promise<Pagination<Seguimiento>> {
     const queryBuilder =
       this.seguimientoRepository.createQueryBuilder('seguimiento');
 
-  
     queryBuilder
       .leftJoinAndSelect('seguimiento.cliente', 'cliente')
       .orderBy('seguimiento.fecha_contacto', 'DESC');
@@ -53,7 +47,6 @@ export class SeguimientoService {
     return paginate<Seguimiento>(queryBuilder, paginationOptions);
   }
 
- 
   async findOne(id_seguimiento: string): Promise<Seguimiento | null> {
     try {
       return await this.seguimientoRepository.findOne({
@@ -65,7 +58,6 @@ export class SeguimientoService {
       return null;
     }
   }
-
 
   async update(
     id_seguimiento: string,
@@ -79,12 +71,10 @@ export class SeguimientoService {
 
       if (!seguimiento) return null;
 
-   
       if (updateSeguimientoDto.id_cliente) {
         (seguimiento as any).cliente = {
           id_cliente: updateSeguimientoDto.id_cliente,
         } as any;
-   
         delete (updateSeguimientoDto as any).id_cliente;
       }
 
@@ -96,7 +86,6 @@ export class SeguimientoService {
     }
   }
 
-  
   async remove(id_seguimiento: string): Promise<Seguimiento | null> {
     try {
       const seguimiento = await this.seguimientoRepository.findOne({
