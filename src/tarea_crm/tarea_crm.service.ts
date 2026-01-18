@@ -34,7 +34,7 @@ export class TareaCrmService {
     }
   }
 
-  async findAll(options: IPaginationOptions): Promise<Pagination<TareaCrm>> {
+  async findAll(options: IPaginationOptions & { id_empleado?: string; id_cliente?: string }): Promise<Pagination<TareaCrm>> {
     const queryBuilder = this.tareaRepository.createQueryBuilder('tarea');
 
     queryBuilder
@@ -42,7 +42,16 @@ export class TareaCrmService {
       .leftJoinAndSelect('tarea.cliente', 'cliente')
       .orderBy('tarea.fecha_asignacion', 'DESC');
 
-    return paginate<TareaCrm>(queryBuilder, options);
+    if (options.id_empleado) {
+      queryBuilder.andWhere('empleado.id_empleado = :id_empleado', { id_empleado: options.id_empleado });
+    }
+
+    if (options.id_cliente) {
+      queryBuilder.andWhere('cliente.id_cliente = :id_cliente', { id_cliente: options.id_cliente });
+    }
+
+    const { id_empleado, id_cliente, ...paginationOptions } = options;
+    return paginate<TareaCrm>(queryBuilder, paginationOptions);
   }
 
   async findOne(id_tarea: string): Promise<TareaCrm | null> {

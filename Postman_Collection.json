@@ -1,0 +1,330 @@
+{
+  "info": {
+    "name": "CRM Admisiones UTE",
+    "description": "Colección de pruebas para el API de CRM Admisiones UTE",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.access_token);",
+                  "    console.log('Token guardado:', jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"asesor@gmail.com\",\n  \"password\": \"1234567\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Seguimientos",
+      "item": [
+        {
+          "name": "Crear Seguimiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_cliente\": \"769f222a-9478-4fcf-a341-d37fb4769e23\",\n  \"fecha_contacto\": \"2025-05-04\",\n  \"medio\": \"WhatsApp\",\n  \"comentarios\": \"Cliente interesado en la carrera de desarrollo de Software\",\n  \"proximo_paso\": \"Enviar precios de la carrera\",\n  \"fecha_proximo_contacto\": \"2025-12-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seguimiento",
+              "host": ["{{base_url}}"],
+              "path": ["seguimiento"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Seguimientos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seguimiento?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["seguimiento"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Seguimiento por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seguimiento/:id_seguimiento",
+              "host": ["{{base_url}}"],
+              "path": ["seguimiento", ":id_seguimiento"],
+              "variable": [
+                {
+                  "key": "id_seguimiento",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Seguimiento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_cliente\": \"769f222a-9478-4fcf-a341-d37fb4769e23\",\n  \"fecha_contacto\": \"2025-05-05\",\n  \"medio\": \"Email\",\n  \"comentarios\": \"Cliente confirmó interés, enviar información detallada\",\n  \"proximo_paso\": \"Agendar reunión presencial\",\n  \"fecha_proximo_contacto\": \"2025-12-20\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seguimiento/:id_seguimiento",
+              "host": ["{{base_url}}"],
+              "path": ["seguimiento", ":id_seguimiento"],
+              "variable": [
+                {
+                  "key": "id_seguimiento",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Seguimiento",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seguimiento/:id_seguimiento",
+              "host": ["{{base_url}}"],
+              "path": ["seguimiento", ":id_seguimiento"],
+              "variable": [
+                {
+                  "key": "id_seguimiento",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tareas CRM",
+      "item": [
+        {
+          "name": "Crear Tarea",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_empleado\": \"112922ca-b620-4ea8-b57b-03d18c8eb818\",\n  \"id_cliente\": \"769f222a-9478-4fcf-a341-d37fb4769e23\",\n  \"descripcion\": \"Llamar al cliente para seguimiento de postulación\",\n  \"fecha_asignacion\": \"2025-01-15\",\n  \"fecha_vencimiento\": \"2025-01-20\",\n  \"estado\": \"Pendiente\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tareas",
+              "host": ["{{base_url}}"],
+              "path": ["tareas"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todas las Tareas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tareas?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["tareas"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Tarea por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tareas/:id_tarea",
+              "host": ["{{base_url}}"],
+              "path": ["tareas", ":id_tarea"],
+              "variable": [
+                {
+                  "key": "id_tarea",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Tarea",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_empleado\": \"112922ca-b620-4ea8-b57b-03d18c8eb818\",\n  \"id_cliente\": \"769f222a-9478-4fcf-a341-d37fb4769e23\",\n  \"descripcion\": \"Tarea completada - Cliente contactado exitosamente\",\n  \"estado\": \"Completada\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tareas/:id_tarea",
+              "host": ["{{base_url}}"],
+              "path": ["tareas", ":id_tarea"],
+              "variable": [
+                {
+                  "key": "id_tarea",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Tarea",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tareas/:id_tarea",
+              "host": ["{{base_url}}"],
+              "path": ["tareas", ":id_tarea"],
+              "variable": [
+                {
+                  "key": "id_tarea",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

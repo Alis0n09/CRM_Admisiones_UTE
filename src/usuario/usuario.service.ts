@@ -63,10 +63,17 @@ export class UsuarioService {
   }
 
   async findByEmail(email: string): Promise<Usuario | null> {
-    return await this.usuarioRepository.findOne({
-      where: { email },
-      relations: ['empleado', 'cliente', 'rolUsuarios', 'rolUsuarios.rol'],
-    });
+    // Usar QueryBuilder para asegurar que se carguen todas las relaciones correctamente
+    const usuario = await this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.empleado', 'empleado')
+      .leftJoinAndSelect('usuario.cliente', 'cliente')
+      .leftJoinAndSelect('usuario.rolUsuarios', 'rolUsuarios')
+      .leftJoinAndSelect('rolUsuarios.rol', 'rol')
+      .where('usuario.email = :email', { email })
+      .getOne();
+
+    return usuario;
   }
 
   async findAll() {

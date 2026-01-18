@@ -36,7 +36,7 @@ export class SeguimientoService {
   }
 
   
-  async findAll(options: IPaginationOptions): Promise<Pagination<Seguimiento>> {
+  async findAll(options: IPaginationOptions & { id_cliente?: string }): Promise<Pagination<Seguimiento>> {
     const queryBuilder =
       this.seguimientoRepository.createQueryBuilder('seguimiento');
 
@@ -45,7 +45,12 @@ export class SeguimientoService {
       .leftJoinAndSelect('seguimiento.cliente', 'cliente')
       .orderBy('seguimiento.fecha_contacto', 'DESC');
 
-    return paginate<Seguimiento>(queryBuilder, options);
+    if (options.id_cliente) {
+      queryBuilder.andWhere('cliente.id_cliente = :id_cliente', { id_cliente: options.id_cliente });
+    }
+
+    const { id_cliente, ...paginationOptions } = options;
+    return paginate<Seguimiento>(queryBuilder, paginationOptions);
   }
 
  
