@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'src/decorators/roles.decorator';
 
@@ -19,10 +24,18 @@ export class RolesGuard implements CanActivate {
 
     if (!user) throw new ForbiddenException('No autenticado');
 
-    const userRoles: string[] = Array.isArray(user.roles) ? user.roles : [];
+    // 🔽 🔽 🔽 LO QUE FALTABA (SIN ROMPER LO EXISTENTE)
+    const userRoles: string[] = Array.isArray(user.roles)
+      ? user.roles
+      : user.role
+      ? [user.role]
+      : [];
+    // 🔼 🔼 🔼
+
     const ok = requiredRoles.some((role) => userRoles.includes(role));
 
     if (!ok) throw new ForbiddenException('No tienes permisos');
+
     return true;
   }
 }
