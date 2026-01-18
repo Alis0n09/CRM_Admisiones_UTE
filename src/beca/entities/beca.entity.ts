@@ -42,5 +42,5 @@ export class Beca {
   fecha_fin: Date;
 
   @Column({ length: 20, default: 'Activa' })
-  estado: string; // Activa, Inactiva, Vencida
+  estado: string;
 }
