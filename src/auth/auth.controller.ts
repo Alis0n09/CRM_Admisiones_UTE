@@ -14,7 +14,6 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   getProfile(@Req() req: any) {
-    // Endpoint para diagnosticar el token y ver qué contiene
     return {
       user: req.user,
       diagnostic: {
