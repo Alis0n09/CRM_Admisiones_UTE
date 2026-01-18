@@ -12,7 +12,6 @@ import { PostulacionModule } from './postulacion/postulacion.module';
 import { MatriculaModule } from './matricula/matricula.module';
 import { DocumentosPostulacionModule } from './documento_postulacion/documento_postulacion.module';
 import { BecaModule } from './beca/beca.module';
-import { RequisitoBecaModule } from './requisito_beca/requisito_beca.module';
 import { BecaEstudianteModule } from './beca_estudiante/beca_estudiante.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { RolModule } from './rol/rol.module';
@@ -48,7 +47,6 @@ import { RolUsuarioModule } from './rol_usuario/rol_usuario.module';
     MatriculaModule,
     DocumentosPostulacionModule,
     BecaModule,
-    RequisitoBecaModule,
     BecaEstudianteModule,
     UsuarioModule,
     RolModule,

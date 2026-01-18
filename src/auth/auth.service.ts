@@ -22,7 +22,8 @@ export class AuthService {
     const payload = {
       sub: usuario.id_usuario,
       email: usuario.email,
-      roles, // array de roles
+      roles,
+      id_cliente: (usuario as any).id_cliente ?? (usuario as any).cliente?.id_cliente ?? null,
     };
 
     return { access_token: this.jwtService.sign(payload) };
