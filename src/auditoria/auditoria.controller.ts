@@ -1,34 +1,24 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
   Param,
   Query,
-  Delete,
-  Patch,
   NotFoundException,
-  InternalServerErrorException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuditoriaService } from './auditoria.service';
 import { SuccessResponseDto } from 'src/common/dto/response.dto';
 import { Auditoria } from './entities/auditoria.schema';
 
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+
 @Controller('auditoria')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('ADMIN') 
 export class AuditoriaController {
   constructor(private readonly auditoriaService: AuditoriaService) {}
-
-
-  @Post()
-  async create(@Body() body: Partial<Auditoria>) {
-    const auditoria = await this.auditoriaService.create(body);
-
-    if (!auditoria)
-      throw new InternalServerErrorException('No se pudo crear la auditoría');
-
-    return new SuccessResponseDto('Auditoría creada con éxito', auditoria);
-  }
-
 
   @Get()
   async findAll(
@@ -47,29 +37,13 @@ export class AuditoriaController {
       desde,
       hasta,
     });
-
     return new SuccessResponseDto('Auditorías obtenidas con éxito', result);
   }
-
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const auditoria = await this.auditoriaService.findOne(id);
-
     if (!auditoria) throw new NotFoundException('Auditoría no encontrada');
-
     return new SuccessResponseDto('Auditoría obtenida con éxito', auditoria);
   }
-
-
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    const auditoria = await this.auditoriaService.remove(id);
-
-    if (!auditoria) throw new NotFoundException('Auditoría no encontrada');
-
-    return new SuccessResponseDto('Auditoría eliminada con éxito', auditoria);
-  }
 }
-
-

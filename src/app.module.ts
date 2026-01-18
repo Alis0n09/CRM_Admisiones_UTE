@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
+
 import { ClienteModule } from './cliente/cliente.module';
 import { TareaCrmModule } from './tarea_crm/tarea_crm.module';
 import { EmpleadoModule } from './empleado/empleado.module';
 import { SeguimientoModule } from './seguimiento/seguimiento.module';
 import { CarreraModule } from './carrera/carrera.module';
-import { PostulacionModule } from './postulacion/postulacion.module'; 
+import { PostulacionModule } from './postulacion/postulacion.module';
 import { MatriculaModule } from './matricula/matricula.module';
 import { DocumentosPostulacionModule } from './documento_postulacion/documento_postulacion.module';
 import { BecaModule } from './beca/beca.module';
@@ -16,14 +19,17 @@ import { BecaEstudianteModule } from './beca_estudiante/beca_estudiante.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { RolModule } from './rol/rol.module';
 import { MailModule } from './mail/mail.module';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AuditoriaModule } from './auditoria/auditoria.module';
 import { AuthModule } from './auth/auth.module';
 import { RolUsuarioModule } from './rol_usuario/rol_usuario.module';
 
+// ✅ IMPORTA EL INTERCEPTOR
+import { AuditoriaInterceptor } from './auditoria/auditoria.interceptor';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -35,9 +41,12 @@ import { RolUsuarioModule } from './rol_usuario/rol_usuario.module';
       synchronize: true,
       // ssl: { rejectUnauthorized: false },
     }),
-    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://localhost:27017/crm_admisiones_ute', {
-      dbName: 'crm_admisiones_ute', 
-    }),
+
+    MongooseModule.forRoot(
+      process.env.MONGO_URI || 'mongodb://localhost:27017/crm_admisiones_ute',
+      { dbName: 'crm_admisiones_ute' },
+    ),
+
     ClienteModule,
     TareaCrmModule,
     EmpleadoModule,
@@ -51,11 +60,21 @@ import { RolUsuarioModule } from './rol_usuario/rol_usuario.module';
     UsuarioModule,
     RolModule,
     MailModule,
+
+    // ✅ IMPORTANTE: AuditoriaModule debe estar para que el service/model exista
     AuditoriaModule,
+
     AuthModule,
-    RolUsuarioModule
+    RolUsuarioModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditoriaInterceptor,
+    },
+  ],
 })
 export class AppModule {}
