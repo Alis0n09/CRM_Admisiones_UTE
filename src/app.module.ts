@@ -22,8 +22,6 @@ import { MailModule } from './mail/mail.module';
 import { AuditoriaModule } from './auditoria/auditoria.module';
 import { AuthModule } from './auth/auth.module';
 import { RolUsuarioModule } from './rol_usuario/rol_usuario.module';
-
-// ✅ IMPORTA EL INTERCEPTOR
 import { AuditoriaInterceptor } from './auditoria/auditoria.interceptor';
 
 @Module({
@@ -60,8 +58,6 @@ import { AuditoriaInterceptor } from './auditoria/auditoria.interceptor';
     UsuarioModule,
     RolModule,
     MailModule,
-
-    // ✅ IMPORTANTE: AuditoriaModule debe estar para que el service/model exista
     AuditoriaModule,
 
     AuthModule,
