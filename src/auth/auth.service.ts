@@ -11,19 +11,28 @@ export class AuthService {
   ) {}
 
   async login(email: string, password: string) {
-    
-    const normalizedEmail = (email ?? '').trim().toLowerCase();
-
-    const usuario = await this.usuarioService.findByEmail(normalizedEmail);
+    const usuario = await this.usuarioService.findByEmail(email);
     if (!usuario) throw new UnauthorizedException('Credenciales incorrectas');
 
     const ok = await bcrypt.compare(password, usuario.password_hash);
     if (!ok) throw new UnauthorizedException('Credenciales incorrectas');
 
-   
-    const rolesRaw = usuario.rolUsuarios?.map((ru) => ru?.rol?.nombre).filter(Boolean) as string[] | undefined;
-    const roles = Array.from(new Set(rolesRaw ?? [])); 
+    console.log('Usuario encontrado:', {
+      email: usuario.email,
+      id_usuario: usuario.id_usuario,
+      rolUsuarios_length: usuario.rolUsuarios?.length ?? 0,
+      rolUsuarios: usuario.rolUsuarios?.map(ru => ({
+        id: ru.id,
+        rol: ru.rol ? { id: ru.rol.id_rol, nombre: ru.rol.nombre } : null
+      })) ?? []
+    });
 
+    const roles = usuario.rolUsuarios
+      ?.filter((ru) => ru.rol && ru.rol.nombre)
+      ?.map((ru) => ru.rol.nombre)
+      ?? [];
+
+    console.log('Roles extraídos:', roles);
 
     const payload = {
       sub: usuario.id_usuario,
@@ -33,9 +42,8 @@ export class AuthService {
       id_empleado: usuario.id_empleado ?? null,
     };
 
-    const access_token = this.jwtService.sign(payload);
+    console.log('Payload JWT:', payload);
 
-   
     return {
       access_token,
       user: {
