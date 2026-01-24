@@ -62,11 +62,21 @@ export class ClienteService {
     }
   }
 
-  async findAll(options: IPaginationOptions): Promise<Pagination<Cliente>> {
-    const queryBuilder = this.clienteRepository.createQueryBuilder('cliente');
-    queryBuilder.orderBy('cliente.nombres', 'ASC');
-    return paginate<Cliente>(queryBuilder, options);
+async findAll(options: IPaginationOptions & { search?: string }): Promise<Pagination<Cliente>> {
+  const queryBuilder = this.clienteRepository.createQueryBuilder('cliente');
+  
+  // Si hay un término de búsqueda, agregar condiciones WHERE
+  if (options.search && options.search.trim()) {
+    const searchTerm = `%${options.search.trim()}%`;
+    queryBuilder.where(
+      '(cliente.nombres ILIKE :search OR cliente.apellidos ILIKE :search OR cliente.numero_identificacion ILIKE :search OR cliente.correo ILIKE :search)',
+      { search: searchTerm }
+    );
   }
+  
+  queryBuilder.orderBy('cliente.nombres', 'ASC');
+  return paginate<Cliente>(queryBuilder, options);
+}
 
   async findOne(id_cliente: string): Promise<Cliente> {
     const cliente = await this.clienteRepository.findOne({

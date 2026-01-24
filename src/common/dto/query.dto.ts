@@ -27,4 +27,12 @@ export class QueryDto {
   @IsOptional()
   @IsString()
   order?: 'ASC' | 'DESC';
+
 }
+
+export interface IPaginationOptions {
+  page?: number;
+  limit?: number; 
+  search?: string;  // Agregar esta línea
+}
+

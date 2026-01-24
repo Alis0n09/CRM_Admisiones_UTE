@@ -11,43 +11,28 @@ export class AuthService {
   ) {}
 
   async login(email: string, password: string) {
-    const normalizedEmail = (email ?? '').trim().toLowerCase();
-
-    console.log('🔍 Intentando login con email:', normalizedEmail);
-
-    const usuario = await this.usuarioService.findByEmail(normalizedEmail);
-    
-    if (!usuario) {
-      console.log('❌ Usuario no encontrado con email:', normalizedEmail);
-      throw new UnauthorizedException('Credenciales incorrectas');
-    }
-
-    console.log('✅ Usuario encontrado:', {
-      id_usuario: usuario.id_usuario,
-      email: usuario.email,
-      activo: usuario.activo,
-      tienePassword: !!usuario.password_hash
-    });
-
-    if (!usuario.activo) {
-      console.log('❌ Usuario inactivo');
-      throw new UnauthorizedException('Tu cuenta está desactivada');
-    }
+    const usuario = await this.usuarioService.findByEmail(email);
+    if (!usuario) throw new UnauthorizedException('Credenciales incorrectas');
 
     const ok = await bcrypt.compare(password, usuario.password_hash);
-    if (!ok) {
-      console.log('❌ Contraseña incorrecta');
-      throw new UnauthorizedException('Credenciales incorrectas');
-    }
+    if (!ok) throw new UnauthorizedException('Credenciales incorrectas');
 
-    // ✅ roles desde relación (rolUsuarios -> rol -> nombre)
-    const rolesRaw = usuario.rolUsuarios?.map((ru) => ru?.rol?.nombre).filter(Boolean) as string[] | undefined;
-    const roles = Array.from(new Set(rolesRaw ?? [])); // sin duplicados
+    console.log('Usuario encontrado:', {
+      email: usuario.email,
+      id_usuario: usuario.id_usuario,
+      rolUsuarios_length: usuario.rolUsuarios?.length ?? 0,
+      rolUsuarios: usuario.rolUsuarios?.map(ru => ({
+        id: ru.id,
+        rol: ru.rol ? { id: ru.rol.id_rol, nombre: ru.rol.nombre } : null
+      })) ?? []
+    });
 
-    // (opcional) si quieres bloquear login si no tiene roles:
-    // if (roles.length === 0) {
-    //   throw new UnauthorizedException('Tu cuenta no tiene un rol asignado');
-    // }
+    const roles = usuario.rolUsuarios
+      ?.filter((ru) => ru.rol && ru.rol.nombre)
+      ?.map((ru) => ru.rol.nombre)
+      ?? [];
+
+    console.log('Roles extraídos:', roles);
 
     const payload = {
       sub: usuario.id_usuario,
@@ -57,9 +42,8 @@ export class AuthService {
       id_empleado: usuario.id_empleado ?? null,
     };
 
-    const access_token = this.jwtService.sign(payload);
+    console.log('Payload JWT:', payload);
 
-    // ✅ ahora el frontend recibe res.user y ya no queda roles=[]
     return {
       access_token,
       user: {
