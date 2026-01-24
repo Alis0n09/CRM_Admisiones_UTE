@@ -13,7 +13,6 @@ import { UsuarioModule } from 'src/usuario/usuario.module';
     ConfigModule,
     UsuarioModule,
 
-    // ✅ ESTO REGISTRA LA ESTRATEGIA "jwt" EN PASSPORT
     PassportModule.register({ defaultStrategy: 'jwt' }),
 
     JwtModule.registerAsync({
@@ -28,10 +27,10 @@ import { UsuarioModule } from 'src/usuario/usuario.module';
     }),
   ],
   controllers: [AuthController],
-  // ✅ METE LA STRATEGY AQUÍ
+
   providers: [AuthService, JwtStrategy],
 
-  // ✅ RECOMENDADO (para que otros módulos usen auth sin líos)
+
   exports: [PassportModule, JwtModule],
 })
 export class AuthModule {}

@@ -193,4 +193,6 @@ Alison Venegas
 Victoria Chicaiza
 Victoria Solórzano
 
-Universidad UTE – Tecnología en Desarrollo de Software
+Universidad UTE
+
+Tecnología en Desarrollo de Software

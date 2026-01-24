@@ -30,6 +30,7 @@ import { MailModule } from './mail/mail.module';
 import { AuditoriaModule } from './auditoria/auditoria.module';
 import { AuthModule } from './auth/auth.module';
 import { RolUsuarioModule } from './rol_usuario/rol_usuario.module';
+import { AuditoriaInterceptor } from './auditoria/auditoria.interceptor';
 
 @Module({
   imports: [
