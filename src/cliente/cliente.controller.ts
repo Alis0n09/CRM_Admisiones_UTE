@@ -17,22 +17,24 @@ import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { Cliente } from './entities/cliente.entity';
+
 import { SuccessResponseDto } from 'src/common/dto/response.dto';
 import { QueryDto } from 'src/common/dto/query.dto';
-import { Cliente } from './entities/cliente.entity';
 
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('cliente')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
-
+  
   @Post()
-  @Roles('ADMIN', 'ASESOR')
+  @Public() 
   async create(@Body() dto: CreateClienteDto) {
     const cliente = await this.clienteService.create(dto);
     return new SuccessResponseDto('Cliente creado con éxito', cliente);
@@ -46,13 +48,13 @@ async findAll(
 ): Promise<SuccessResponseDto<Pagination<Cliente>>> {
   if (query.limit && query.limit > 100) query.limit = 100;
 
-  // Preparar opciones de paginación incluyendo search
+  
   const options: IPaginationOptions & { search?: string } = {
     page: query.page || 1,
     limit: query.limit || 10,
   };
 
-  // Si hay un parámetro search en el query, agregarlo
+  
   if (query.search) {
     options.search = query.search;
   }
@@ -65,7 +67,7 @@ async findAll(
   return new SuccessResponseDto('Clientes obtenidos con éxito', result);
 }
 
-
+  
   @Get(':id_cliente')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findOne(@Param('id_cliente') id_cliente: string, @Req() req: any) {
@@ -74,12 +76,20 @@ async findAll(
 
     if (isAspirante) {
       const myClienteId = req.user?.id_cliente;
-      if (!myClienteId) throw new ForbiddenException('Tu usuario no tiene cliente asociado');
-      if (id_cliente !== myClienteId) throw new ForbiddenException('Solo puedes ver tu perfil');
+      if (!myClienteId) {
+        throw new ForbiddenException(
+          'Tu usuario no tiene cliente asociado',
+        );
+      }
+      if (id_cliente !== myClienteId) {
+        throw new ForbiddenException('Solo puedes ver tu perfil');
+      }
     }
 
     const cliente = await this.clienteService.findOne(id_cliente);
-    if (!cliente) throw new NotFoundException('Cliente no encontrado');
+    if (!cliente) {
+      throw new NotFoundException('Cliente no encontrado');
+    }
 
     return new SuccessResponseDto('Cliente obtenido con éxito', cliente);
   }
@@ -97,22 +107,39 @@ async findAll(
 
     if (isAspirante) {
       const myClienteId = req.user?.id_cliente;
-      if (!myClienteId) throw new ForbiddenException('Tu usuario no tiene cliente asociado');
-      if (id_cliente !== myClienteId) throw new ForbiddenException('Solo puedes editar tu perfil');
+      if (!myClienteId) {
+        throw new ForbiddenException(
+          'Tu usuario no tiene cliente asociado',
+        );
+      }
+      if (id_cliente !== myClienteId) {
+        throw new ForbiddenException('Solo puedes editar tu perfil');
+      }
     }
 
     const cliente = await this.clienteService.update(id_cliente, dto);
-    if (!cliente) throw new NotFoundException('Cliente no registrado');
+    if (!cliente) {
+      throw new NotFoundException('Cliente no registrado');
+    }
 
-    return new SuccessResponseDto('Cliente actualizado con éxito', cliente);
+    return new SuccessResponseDto(
+      'Cliente actualizado con éxito',
+      cliente,
+    );
   }
 
+  
   @Delete(':id_cliente')
   @Roles('ADMIN')
   async remove(@Param('id_cliente') id_cliente: string) {
     const cliente = await this.clienteService.remove(id_cliente);
-    if (!cliente) throw new NotFoundException('Cliente no encontrado');
+    if (!cliente) {
+      throw new NotFoundException('Cliente no encontrado');
+    }
 
-    return new SuccessResponseDto('Cliente eliminado con éxito', cliente);
+    return new SuccessResponseDto(
+      'Cliente eliminado con éxito',
+      cliente,
+    );
   }
 }

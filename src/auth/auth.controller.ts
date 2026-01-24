@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -8,5 +9,23 @@ export class AuthController {
   @Post('login')
   login(@Body() body: { email: string; password: string }) {
     return this.authService.login(body.email, body.password);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getProfile(@Req() req: any) {
+    return {
+      user: req.user,
+      diagnostic: {
+        hasRoles: !!(req.user?.roles && req.user.roles.length > 0),
+        rolesCount: req.user?.roles?.length ?? 0,
+        roles: req.user?.roles ?? [],
+        hasIdCliente: !!req.user?.id_cliente,
+        hasIdEmpleado: !!req.user?.id_empleado,
+        message: req.user?.roles?.length === 0 
+          ? '⚠️ PROBLEMA: El usuario NO tiene roles asignados. Debes asignar el rol ASESOR en la base de datos.'
+          : '✅ Token válido con roles asignados'
+      }
+    };
   }
 }

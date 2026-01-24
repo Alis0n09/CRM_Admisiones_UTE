@@ -63,10 +63,16 @@ export class UsuarioService {
   }
 
   async findByEmail(email: string): Promise<Usuario | null> {
-    return await this.usuarioRepository.findOne({
-      where: { email },
-      relations: ['empleado', 'cliente', 'rolUsuarios', 'rolUsuarios.rol'],
-    });
+    const usuario = await this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.empleado', 'empleado')
+      .leftJoinAndSelect('usuario.cliente', 'cliente')
+      .leftJoinAndSelect('usuario.rolUsuarios', 'rolUsuarios')
+      .leftJoinAndSelect('rolUsuarios.rol', 'rol')
+      .where('usuario.email = :email', { email })
+      .getOne();
+
+    return usuario;
   }
 
   async findAll() {
@@ -90,13 +96,11 @@ export class UsuarioService {
 
     const payload: any = { ...dto };
 
-    // Si viene password, lo convertimos a password_hash
     if (payload.password) {
       payload.password_hash = await bcrypt.hash(payload.password, 10);
-      delete payload.password; // 🔥 evita: Property "password" was not found
+      delete payload.password;
     }
 
-    // rolesIds NO es columna en Usuario (si viene, lo quitamos para evitar error)
     if (payload.rolesIds) {
       delete payload.rolesIds;
     }
