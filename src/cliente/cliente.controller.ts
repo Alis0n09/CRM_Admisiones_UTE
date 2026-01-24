@@ -13,8 +13,7 @@ import {
   Req,
   ForbiddenException,
 } from '@nestjs/common';
-import { Pagination } from 'nestjs-typeorm-paginate';
-
+import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -33,34 +32,42 @@ import { Public } from 'src/auth/public.decorator';
 export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
-  // ✅ REGISTRO PÚBLICO (FORMULARIO HOME)
+  
   @Post()
-  @Public() // 👈 NO requiere token
+  @Public() 
   async create(@Body() dto: CreateClienteDto) {
     const cliente = await this.clienteService.create(dto);
     return new SuccessResponseDto('Cliente creado con éxito', cliente);
   }
 
-  // 🔒 SOLO ADMIN / ASESOR
-  @Get()
-  @Roles('ADMIN', 'ASESOR')
-  async findAll(
-    @Query() query: QueryDto,
-  ): Promise<SuccessResponseDto<Pagination<Cliente>>> {
-    if (query.limit && query.limit > 100) query.limit = 100;
+ 
+@Get()
+@Roles('ADMIN', 'ASESOR')
+async findAll(
+  @Query() query: QueryDto,
+): Promise<SuccessResponseDto<Pagination<Cliente>>> {
+  if (query.limit && query.limit > 100) query.limit = 100;
 
-    const result = await this.clienteService.findAll(query);
+  
+  const options: IPaginationOptions & { search?: string } = {
+    page: query.page || 1,
+    limit: query.limit || 10,
+  };
 
-    if (!result) {
-      throw new InternalServerErrorException(
-        'No se pudieron obtener los clientes',
-      );
-    }
-
-    return new SuccessResponseDto('Clientes obtenidos con éxito', result);
+  
+  if (query.search) {
+    options.search = query.search;
   }
 
-  // 🔒 ADMIN / ASESOR / ASPIRANTE (con validación propia)
+  const result = await this.clienteService.findAll(options);
+
+  if (!result)
+    throw new InternalServerErrorException('No se pudieron obtener los clientes');
+
+  return new SuccessResponseDto('Clientes obtenidos con éxito', result);
+}
+
+  
   @Get(':id_cliente')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findOne(@Param('id_cliente') id_cliente: string, @Req() req: any) {
@@ -87,7 +94,7 @@ export class ClienteController {
     return new SuccessResponseDto('Cliente obtenido con éxito', cliente);
   }
 
-  // 🔒 ADMIN / ASESOR / ASPIRANTE (solo su propio perfil)
+
   @Put(':id_cliente')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async update(
@@ -121,7 +128,7 @@ export class ClienteController {
     );
   }
 
-  // 🔒 SOLO ADMIN
+  
   @Delete(':id_cliente')
   @Roles('ADMIN')
   async remove(@Param('id_cliente') id_cliente: string) {
