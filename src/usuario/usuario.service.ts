@@ -63,16 +63,35 @@ export class UsuarioService {
   }
 
   async findByEmail(email: string): Promise<Usuario | null> {
-    const usuario = await this.usuarioRepository
-      .createQueryBuilder('usuario')
-      .leftJoinAndSelect('usuario.empleado', 'empleado')
-      .leftJoinAndSelect('usuario.cliente', 'cliente')
-      .leftJoinAndSelect('usuario.rolUsuarios', 'rolUsuarios')
-      .leftJoinAndSelect('rolUsuarios.rol', 'rol')
-      .where('usuario.email = :email', { email })
-      .getOne();
+    try {
+      const normalizedEmail = (email ?? '').trim().toLowerCase();
+      
+      const usuario = await this.usuarioRepository
+        .createQueryBuilder('usuario')
+        .leftJoinAndSelect('usuario.empleado', 'empleado')
+        .leftJoinAndSelect('usuario.cliente', 'cliente')
+        .leftJoinAndSelect('usuario.rolUsuarios', 'rolUsuarios')
+        .leftJoinAndSelect('rolUsuarios.rol', 'rol')
+        .where('LOWER(usuario.email) = LOWER(:email)', { email: normalizedEmail })
+        .getOne();
 
-    return usuario;
+      if (usuario) {
+        console.log('📋 Usuario encontrado en BD:', {
+          email: usuario.email,
+          emailNormalizado: normalizedEmail,
+          coinciden: usuario.email.toLowerCase() === normalizedEmail,
+          activo: usuario.activo,
+          rolUsuariosCount: usuario.rolUsuarios?.length ?? 0
+        });
+      } else {
+        console.log('⚠️ No se encontró usuario con email:', normalizedEmail);
+      }
+
+      return usuario;
+    } catch (error) {
+      console.error('❌ Error en findByEmail:', error);
+      return null;
+    }
   }
 
   async findAll() {
