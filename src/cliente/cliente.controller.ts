@@ -14,31 +14,34 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Pagination } from 'nestjs-typeorm-paginate';
+
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { Cliente } from './entities/cliente.entity';
+
 import { SuccessResponseDto } from 'src/common/dto/response.dto';
 import { QueryDto } from 'src/common/dto/query.dto';
-import { Cliente } from './entities/cliente.entity';
 
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('cliente')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
-
+  // ✅ REGISTRO PÚBLICO (FORMULARIO HOME)
   @Post()
-  @Roles('ADMIN', 'ASESOR')
+  @Public() // 👈 NO requiere token
   async create(@Body() dto: CreateClienteDto) {
     const cliente = await this.clienteService.create(dto);
     return new SuccessResponseDto('Cliente creado con éxito', cliente);
   }
 
- 
+  // 🔒 SOLO ADMIN / ASESOR
   @Get()
   @Roles('ADMIN', 'ASESOR')
   async findAll(
@@ -48,13 +51,16 @@ export class ClienteController {
 
     const result = await this.clienteService.findAll(query);
 
-    if (!result)
-      throw new InternalServerErrorException('No se pudieron obtener los clientes');
+    if (!result) {
+      throw new InternalServerErrorException(
+        'No se pudieron obtener los clientes',
+      );
+    }
 
     return new SuccessResponseDto('Clientes obtenidos con éxito', result);
   }
 
-
+  // 🔒 ADMIN / ASESOR / ASPIRANTE (con validación propia)
   @Get(':id_cliente')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findOne(@Param('id_cliente') id_cliente: string, @Req() req: any) {
@@ -63,17 +69,25 @@ export class ClienteController {
 
     if (isAspirante) {
       const myClienteId = req.user?.id_cliente;
-      if (!myClienteId) throw new ForbiddenException('Tu usuario no tiene cliente asociado');
-      if (id_cliente !== myClienteId) throw new ForbiddenException('Solo puedes ver tu perfil');
+      if (!myClienteId) {
+        throw new ForbiddenException(
+          'Tu usuario no tiene cliente asociado',
+        );
+      }
+      if (id_cliente !== myClienteId) {
+        throw new ForbiddenException('Solo puedes ver tu perfil');
+      }
     }
 
     const cliente = await this.clienteService.findOne(id_cliente);
-    if (!cliente) throw new NotFoundException('Cliente no encontrado');
+    if (!cliente) {
+      throw new NotFoundException('Cliente no encontrado');
+    }
 
     return new SuccessResponseDto('Cliente obtenido con éxito', cliente);
   }
 
-
+  // 🔒 ADMIN / ASESOR / ASPIRANTE (solo su propio perfil)
   @Put(':id_cliente')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async update(
@@ -86,22 +100,39 @@ export class ClienteController {
 
     if (isAspirante) {
       const myClienteId = req.user?.id_cliente;
-      if (!myClienteId) throw new ForbiddenException('Tu usuario no tiene cliente asociado');
-      if (id_cliente !== myClienteId) throw new ForbiddenException('Solo puedes editar tu perfil');
+      if (!myClienteId) {
+        throw new ForbiddenException(
+          'Tu usuario no tiene cliente asociado',
+        );
+      }
+      if (id_cliente !== myClienteId) {
+        throw new ForbiddenException('Solo puedes editar tu perfil');
+      }
     }
 
     const cliente = await this.clienteService.update(id_cliente, dto);
-    if (!cliente) throw new NotFoundException('Cliente no registrado');
+    if (!cliente) {
+      throw new NotFoundException('Cliente no registrado');
+    }
 
-    return new SuccessResponseDto('Cliente actualizado con éxito', cliente);
+    return new SuccessResponseDto(
+      'Cliente actualizado con éxito',
+      cliente,
+    );
   }
 
+  // 🔒 SOLO ADMIN
   @Delete(':id_cliente')
   @Roles('ADMIN')
   async remove(@Param('id_cliente') id_cliente: string) {
     const cliente = await this.clienteService.remove(id_cliente);
-    if (!cliente) throw new NotFoundException('Cliente no encontrado');
+    if (!cliente) {
+      throw new NotFoundException('Cliente no encontrado');
+    }
 
-    return new SuccessResponseDto('Cliente eliminado con éxito', cliente);
+    return new SuccessResponseDto(
+      'Cliente eliminado con éxito',
+      cliente,
+    );
   }
 }
