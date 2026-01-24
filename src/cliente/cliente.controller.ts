@@ -13,7 +13,7 @@ import {
   Req,
   ForbiddenException,
 } from '@nestjs/common';
-import { Pagination } from 'nestjs-typeorm-paginate';
+import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -39,20 +39,31 @@ export class ClienteController {
   }
 
  
-  @Get()
-  @Roles('ADMIN', 'ASESOR')
-  async findAll(
-    @Query() query: QueryDto,
-  ): Promise<SuccessResponseDto<Pagination<Cliente>>> {
-    if (query.limit && query.limit > 100) query.limit = 100;
+@Get()
+@Roles('ADMIN', 'ASESOR')
+async findAll(
+  @Query() query: QueryDto,
+): Promise<SuccessResponseDto<Pagination<Cliente>>> {
+  if (query.limit && query.limit > 100) query.limit = 100;
 
-    const result = await this.clienteService.findAll(query);
+  // Preparar opciones de paginación incluyendo search
+  const options: IPaginationOptions & { search?: string } = {
+    page: query.page || 1,
+    limit: query.limit || 10,
+  };
 
-    if (!result)
-      throw new InternalServerErrorException('No se pudieron obtener los clientes');
-
-    return new SuccessResponseDto('Clientes obtenidos con éxito', result);
+  // Si hay un parámetro search en el query, agregarlo
+  if (query.search) {
+    options.search = query.search;
   }
+
+  const result = await this.clienteService.findAll(options);
+
+  if (!result)
+    throw new InternalServerErrorException('No se pudieron obtener los clientes');
+
+  return new SuccessResponseDto('Clientes obtenidos con éxito', result);
+}
 
 
   @Get(':id_cliente')

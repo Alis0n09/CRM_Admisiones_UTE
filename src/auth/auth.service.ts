@@ -11,21 +11,44 @@ export class AuthService {
   ) {}
 
   async login(email: string, password: string) {
-    const usuario = await this.usuarioService.findByEmail(email);
+    // ✅ normaliza email
+    const normalizedEmail = (email ?? '').trim().toLowerCase();
+
+    const usuario = await this.usuarioService.findByEmail(normalizedEmail);
     if (!usuario) throw new UnauthorizedException('Credenciales incorrectas');
 
     const ok = await bcrypt.compare(password, usuario.password_hash);
     if (!ok) throw new UnauthorizedException('Credenciales incorrectas');
 
-    const roles = usuario.rolUsuarios?.map((ru) => ru.rol.nombre) ?? [];
+    // ✅ roles desde relación (rolUsuarios -> rol -> nombre)
+    const rolesRaw = usuario.rolUsuarios?.map((ru) => ru?.rol?.nombre).filter(Boolean) as string[] | undefined;
+    const roles = Array.from(new Set(rolesRaw ?? [])); // sin duplicados
+
+    // (opcional) si quieres bloquear login si no tiene roles:
+    // if (roles.length === 0) {
+    //   throw new UnauthorizedException('Tu cuenta no tiene un rol asignado');
+    // }
 
     const payload = {
       sub: usuario.id_usuario,
       email: usuario.email,
-      roles, // array de roles
+      roles,
       id_cliente: usuario.id_cliente ?? null,
+      id_empleado: usuario.id_empleado ?? null,
     };
 
-    return { access_token: this.jwtService.sign(payload) };
+    const access_token = this.jwtService.sign(payload);
+
+    // ✅ ahora el frontend recibe res.user y ya no queda roles=[]
+    return {
+      access_token,
+      user: {
+        id_usuario: usuario.id_usuario,
+        email: usuario.email,
+        roles,
+        id_cliente: usuario.id_cliente ?? null,
+        id_empleado: usuario.id_empleado ?? null,
+      },
+    };
   }
 }
