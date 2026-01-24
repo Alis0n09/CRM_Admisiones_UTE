@@ -17,6 +17,8 @@ async function bootstrap() {
 
   app.useGlobalFilters(new GlobalHttpExceptionFilter());
 
+  app.enableCors({ origin: true, credentials: true }); // Frontend (ej. localhost:5173) puede consumir la API
+
   // Habilita acceso público a la carpeta /public
   app.useStaticAssets(join(__dirname, '..', 'public'), {
   prefix: '/public/',
