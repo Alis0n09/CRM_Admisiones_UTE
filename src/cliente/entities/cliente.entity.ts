@@ -6,7 +6,6 @@ export class Cliente {
   @PrimaryGeneratedColumn('uuid')
   id_cliente: string;
 
-  // ===== Datos básicos =====
   @Column({ length: 100, nullable: false })
   nombres: string;
 
@@ -19,7 +18,6 @@ export class Cliente {
   @Column({ length: 20, unique: true, nullable: false })
   numero_identificacion: string;
 
-  // ===== Contacto =====
   @Column({ length: 120, nullable: true })
   correo: string;
 
@@ -29,7 +27,6 @@ export class Cliente {
   @Column({ length: 20, nullable: true })
   celular: string;
 
-  // ===== Dirección =====
   @Column({ length: 150, nullable: true })
   calle_principal: string;
 
@@ -39,7 +36,6 @@ export class Cliente {
   @Column({ length: 20, nullable: true })
   numero_casa: string;
 
-  // ===== Campos que venían de ASPIRANTE =====
   @Column({ length: 50, nullable: true })
   nacionalidad: string;
 
@@ -55,7 +51,6 @@ export class Cliente {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fecha_registro: Date;
 
-  // ===== CRM / estado =====
   @Column({ length: 50, nullable: false })
   origen: string;
 
@@ -65,7 +60,6 @@ export class Cliente {
   @Column({ length: 30, default: 'Nuevo' })
   estado: string;
 
-  // ===== Relaciones =====
   @OneToMany(() => TareaCrm, (tarea) => tarea.cliente)
   tareas: TareaCrm[];
 }

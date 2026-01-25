@@ -113,18 +113,28 @@ export class UsuarioService {
     });
     if (!usuario) throw new NotFoundException('Usuario no encontrado');
 
-    const payload: any = { ...dto };
+    const payload: Record<string, unknown> = { ...dto };
+    delete payload.rolesIds;
 
-    if (payload.password) {
-      payload.password_hash = await bcrypt.hash(payload.password, 10);
-      delete payload.password;
+    if (payload.password != null && payload.password !== '') {
+      (payload as any).password_hash = await bcrypt.hash(
+        String(payload.password),
+        10,
+      );
+    }
+    delete payload.password;
+
+    const toUpdate: Record<string, unknown> = {};
+    const allowed = ['email', 'activo', 'password_hash'];
+    for (const k of allowed) {
+      if ((payload as any)[k] !== undefined) {
+        toUpdate[k] = (payload as any)[k];
+      }
     }
 
-    if (payload.rolesIds) {
-      delete payload.rolesIds;
+    if (Object.keys(toUpdate).length > 0) {
+      await this.usuarioRepository.update({ id_usuario }, toUpdate);
     }
-
-    await this.usuarioRepository.update({ id_usuario }, payload);
     return this.findOne(id_usuario);
   }
 

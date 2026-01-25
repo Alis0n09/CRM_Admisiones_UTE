@@ -46,13 +46,9 @@ export class MatriculaController {
   @Post()
   async create(@Body() dto: CreateMatriculaDto, @Req() req: Request) {
     const { user, isAspirante, isPrivileged } = this.getRoleFlags(req);
-
-    // Debe ser admin, asesor o aspirante
     if (!isPrivileged && !isAspirante) {
       throw new ForbiddenException('No tienes permisos');
     }
-
-    // Aspirante: solo puede crear su propia matrícula
     if (!isPrivileged && isAspirante) {
       if (!user?.id_cliente) throw new ForbiddenException('Cliente no válido');
       (dto as any).id_cliente = user.id_cliente;
@@ -73,8 +69,6 @@ export class MatriculaController {
     @Req() req: Request,
   ): Promise<SuccessResponseDto<Pagination<Matricula>>> {
     const { isPrivileged } = this.getRoleFlags(req);
-
-    // Solo admin/asesor listan todas
     if (!isPrivileged) {
       throw new ForbiddenException('No tienes permisos');
     }
@@ -89,24 +83,15 @@ export class MatriculaController {
     @Req() req: Request,
   ) {
     const { user, isAspirante, isPrivileged } = this.getRoleFlags(req);
-
-    // Debe ser admin/asesor/aspirante
     if (!isPrivileged && !isAspirante) {
       throw new ForbiddenException('No tienes permisos');
     }
-
     const matricula = await this.matriculaService.findOne(id_matricula);
     if (!matricula) throw new NotFoundException('Matrícula no encontrada');
-
-    // Admin/Asesor ven cualquiera
     if (isPrivileged) {
       return new SuccessResponseDto('Matrícula obtenida con éxito', matricula);
     }
-
-    // Aspirante: solo puede ver su matrícula
     if (!user?.id_cliente) throw new ForbiddenException('Cliente no válido');
-
-    // OJO: según tu entity puede estar en matricula.cliente.id_cliente o matricula.id_cliente
     const ownerId =
       (matricula as any)?.cliente?.id_cliente ?? (matricula as any)?.id_cliente;
 
@@ -124,8 +109,6 @@ export class MatriculaController {
     @Req() req: Request,
   ) {
     const { isPrivileged } = this.getRoleFlags(req);
-
-    // Solo admin/asesor actualizan
     if (!isPrivileged) {
       throw new ForbiddenException('No tienes permisos');
     }
@@ -139,8 +122,6 @@ export class MatriculaController {
   @Delete(':id_matricula')
   async remove(@Param('id_matricula') id_matricula: string, @Req() req: Request) {
     const { isPrivileged } = this.getRoleFlags(req);
-
-    // Solo admin/asesor eliminan
     if (!isPrivileged) {
       throw new ForbiddenException('No tienes permisos');
     }

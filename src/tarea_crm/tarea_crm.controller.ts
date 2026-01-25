@@ -47,7 +47,7 @@ export class TareaCrmController {
   }
 
   @Get()
-  @Roles('ADMIN', 'ASESOR')
+  @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findAll(
     @Query() query: QueryDto,
     @Req() req: any,
@@ -82,7 +82,7 @@ export class TareaCrmController {
   }
 
   @Get(':id_tarea')
-  @Roles('ADMIN', 'ASESOR')
+  @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findOne(@Param('id_tarea') id_tarea: string, @Req() req: any) {
     const roles: string[] = req.user?.roles ?? [];
     const isAspirante = roles.includes('ASPIRANTE');
@@ -115,7 +115,7 @@ export class TareaCrmController {
   }
 
   @Put(':id_tarea')
-  @Roles('ADMIN', 'ASESOR')
+  @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async update(
     @Param('id_tarea') id_tarea: string,
     @Body() dto: UpdateTareaDto,
