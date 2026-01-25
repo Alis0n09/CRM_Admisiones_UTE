@@ -98,6 +98,24 @@ export class PostulacionService {
     return paginate<Postulacion>(queryBuilder, options);
   }
 
+  async findActiveByClienteId(id_cliente: string | number): Promise<Postulacion | null> {
+    try {
+      // Buscar la postulación más reciente del cliente que esté en estado activo o pendiente
+      const postulacion = await this.postulacionRepository.findOne({
+        where: { 
+          cliente: { id_cliente: id_cliente as any },
+        },
+        relations: ['cliente', 'carrera'],
+        order: { fecha_postulacion: 'DESC' as any },
+      });
+
+      return postulacion;
+    } catch (error) {
+      console.error('Error al buscar postulación activa por cliente', error);
+      return null;
+    }
+  }
+
   async update(
     id_postulacion: string,
     updatePostulacionDto: UpdatePostulacionDto,

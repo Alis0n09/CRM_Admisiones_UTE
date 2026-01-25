@@ -68,6 +68,47 @@ export class PostulacionController {
     return new SuccessResponseDto('Postulaciones obtenidas con éxito', result);
   }
 
+  @Get('activa')
+  @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
+  async findActive(@Query('id_cliente') idClienteQuery: string, @Req() req: any) {
+    const roles: string[] = req.user?.roles ?? [];
+    const isAspirante = roles.includes('ASPIRANTE');
+    const isAsesor = roles.includes('ASESOR');
+    const isAdmin = roles.includes('ADMIN');
+
+    let idCliente: string | undefined;
+
+    if (isAspirante) {
+      // Para ASPIRANTE, usar el id_cliente del usuario autenticado
+      idCliente = req.user?.id_cliente;
+      if (!idCliente) {
+        throw new ForbiddenException('Acceso no permitido. No se encontró información del cliente.');
+      }
+    } else if (isAsesor || isAdmin) {
+      // Para ASESOR y ADMIN, pueden especificar el id_cliente en el query o usar el del request
+      idCliente = idClienteQuery || req.user?.id_cliente;
+      if (!idCliente) {
+        throw new ForbiddenException('Debe especificar el id_cliente como parámetro de consulta.');
+      }
+    } else {
+      throw new ForbiddenException('Acceso no permitido');
+    }
+
+    try {
+      const postulacion = await this.postulacionService.findActiveByClienteId(String(idCliente));
+      if (!postulacion) {
+        throw new NotFoundException('No se encontró una postulación activa. Por favor recarga la página.');
+      }
+
+      return new SuccessResponseDto('Postulación activa obtenida con éxito', postulacion);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('No se pudo obtener la postulación. Por favor verifica tu sesión o contacta al administrador.');
+    }
+  }
+
   @Get(':id_postulacion')
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   async findOne(

@@ -14,22 +14,67 @@ export class DocumentosPostulacionService {
     private readonly postulacionService: PostulacionService,
   ) {}
 
+  async findExistingByTipoAndPostulacion(
+    tipo_documento: string,
+    id_postulacion: string,
+  ): Promise<DocumentosPostulacion | null> {
+    return await this.repo.findOne({
+      where: {
+        tipo_documento,
+        postulacion: { id_postulacion } as any,
+      },
+      relations: ['postulacion'],
+    });
+  }
+
   async create(dto: CreateDocumentosPostulacionDto): Promise<DocumentosPostulacion> {
+    // Verificar si ya existe un documento del mismo tipo para esta postulación
+    const documentoExistente = await this.findExistingByTipoAndPostulacion(
+      dto.tipo_documento,
+      dto.id_postulacion,
+    );
+
+    if (documentoExistente) {
+      // Si existe, actualizar el documento existente en lugar de crear uno nuevo
+      documentoExistente.nombre_archivo = dto.nombre_archivo;
+      documentoExistente.url_archivo = dto.url_archivo;
+      documentoExistente.estado_documento = dto.estado_documento || documentoExistente.estado_documento || 'Pendiente';
+      if (dto.observaciones !== undefined) {
+        documentoExistente.observaciones = dto.observaciones;
+      }
+
+      const saved = await this.repo.save(documentoExistente);
+      
+      // Retornar el documento actualizado con todas sus relaciones
+      return await this.repo.findOne({
+        where: { id_documento: saved.id_documento },
+        relations: ['postulacion', 'postulacion.cliente', 'postulacion.carrera'],
+      }) || saved;
+    }
+
+    // Si no existe, crear uno nuevo
     const doc = this.repo.create({
       postulacion: { id_postulacion: dto.id_postulacion } as any,
       tipo_documento: dto.tipo_documento,
       nombre_archivo: dto.nombre_archivo,
       url_archivo: dto.url_archivo,
-      estado_documento: dto.estado_documento,
+      estado_documento: dto.estado_documento || 'Pendiente',
       observaciones: dto.observaciones,
     });
 
-    return await this.repo.save(doc);
+    const saved = await this.repo.save(doc);
+    
+    // Retornar el documento con todas sus relaciones
+    return await this.repo.findOne({
+      where: { id_documento: saved.id_documento },
+      relations: ['postulacion', 'postulacion.cliente', 'postulacion.carrera'],
+    }) || saved;
   }
 
   async findAll(): Promise<DocumentosPostulacion[]> {
     return await this.repo.find({
-      relations: ['postulacion'],
+      relations: ['postulacion', 'postulacion.cliente', 'postulacion.carrera'],
+      order: { created_at: 'DESC' },
     });
   }
 
@@ -37,7 +82,10 @@ export class DocumentosPostulacionService {
     return await this.repo
       .createQueryBuilder('doc')
       .leftJoinAndSelect('doc.postulacion', 'postulacion')
+      .leftJoinAndSelect('postulacion.cliente', 'cliente')
+      .leftJoinAndSelect('postulacion.carrera', 'carrera')
       .where('postulacion.id_postulacion = :id_postulacion', { id_postulacion })
+      .orderBy('doc.created_at', 'DESC')
       .getMany();
   }
 
@@ -50,7 +98,10 @@ export class DocumentosPostulacionService {
     return await this.repo
       .createQueryBuilder('doc')
       .leftJoinAndSelect('doc.postulacion', 'postulacion')
+      .leftJoinAndSelect('postulacion.cliente', 'cliente')
+      .leftJoinAndSelect('postulacion.carrera', 'carrera')
       .where('postulacion.id_postulacion IN (:...ids)', { ids })
+      .orderBy('doc.created_at', 'DESC')
       .getMany();
   }
 
@@ -101,7 +152,13 @@ export class DocumentosPostulacionService {
     doc.estado_documento = dto.estado_documento;
     doc.observaciones = dto.observaciones;
 
-    return await this.repo.save(doc);
+    const saved = await this.repo.save(doc);
+    
+    // Retornar el documento con todas sus relaciones
+    return await this.repo.findOne({
+      where: { id_documento: saved.id_documento },
+      relations: ['postulacion', 'postulacion.cliente', 'postulacion.carrera'],
+    }) || saved;
   }
 
   async remove(id_documento: string): Promise<void> {

@@ -5,7 +5,6 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
-
 import { ClienteModule } from './cliente/cliente.module';
 import { TareaCrmModule } from './tarea_crm/tarea_crm.module';
 import { EmpleadoModule } from './empleado/empleado.module';
@@ -22,8 +21,6 @@ import { MailModule } from './mail/mail.module';
 import { AuditoriaModule } from './auditoria/auditoria.module';
 import { AuthModule } from './auth/auth.module';
 import { RolUsuarioModule } from './rol_usuario/rol_usuario.module';
-
-// ✅ IMPORTA EL INTERCEPTOR
 import { AuditoriaInterceptor } from './auditoria/auditoria.interceptor';
 
 @Module({
@@ -60,8 +57,6 @@ import { AuditoriaInterceptor } from './auditoria/auditoria.interceptor';
     UsuarioModule,
     RolModule,
     MailModule,
-
-    // ✅ IMPORTANTE: AuditoriaModule debe estar para que el service/model exista
     AuditoriaModule,
 
     AuthModule,
