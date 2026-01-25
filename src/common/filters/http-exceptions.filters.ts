@@ -21,7 +21,6 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
     const message = typeof exceptionResponse === 'string'
       ? exceptionResponse
       : (exceptionResponse as any).message;
-    console.error('❌ Error atrapado por GlobalHttpExceptionFilter:', exception);
 
     const errorResponse = new ErrorResponseDto(message, status);
     response.status(status).json(errorResponse);

@@ -79,13 +79,11 @@ export class PostulacionController {
     let idCliente: string | undefined;
 
     if (isAspirante) {
-      // Para ASPIRANTE, usar el id_cliente del usuario autenticado
       idCliente = req.user?.id_cliente;
       if (!idCliente) {
         throw new ForbiddenException('Acceso no permitido. No se encontró información del cliente.');
       }
     } else if (isAsesor || isAdmin) {
-      // Para ASESOR y ADMIN, pueden especificar el id_cliente en el query o usar el del request
       idCliente = idClienteQuery || req.user?.id_cliente;
       if (!idCliente) {
         throw new ForbiddenException('Debe especificar el id_cliente como parámetro de consulta.');

@@ -31,7 +31,6 @@ export class MatriculaService {
         relations: ['cliente', 'carrera'],
       });
     } catch (error) {
-      console.error('Error al crear la matricula', error);
       return null;
     }
   }
@@ -54,7 +53,6 @@ export class MatriculaService {
         relations: ['cliente', 'carrera'],
       });
     } catch (error) {
-      console.error('Error al buscar la matricula', error);
       return null;
     }
   }
@@ -96,7 +94,6 @@ export class MatriculaService {
         relations: ['cliente', 'carrera'],
       });
     } catch (error) {
-      console.error('Error al actualizar la matricula', error);
       return null;
     }
   }
@@ -112,7 +109,6 @@ export class MatriculaService {
 
       return await this.matriculaRepository.remove(matricula);
     } catch (error) {
-      console.error('Error al eliminar la matricula', error);
       return null;
     }
   }

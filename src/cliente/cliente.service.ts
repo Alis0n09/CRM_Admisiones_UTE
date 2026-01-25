@@ -53,7 +53,6 @@ export class ClienteService {
         throw error;
       }
 
-      console.error('Error al crear el cliente:', error);
       throw new InternalServerErrorException('Error interno al crear el cliente');
     }
   }
@@ -122,7 +121,6 @@ async findAll(options: IPaginationOptions & { search?: string }): Promise<Pagina
         throw error;
       }
 
-      console.error('Error al actualizar el cliente:', error);
       throw new InternalServerErrorException('Error interno al actualizar el cliente');
     }
   }
@@ -138,7 +136,6 @@ async findAll(options: IPaginationOptions & { search?: string }): Promise<Pagina
     } catch (error: any) {
       if (error instanceof NotFoundException) throw error;
 
-      console.error('Error al eliminar el cliente:', error);
       throw new InternalServerErrorException('Error interno al eliminar el cliente');
     }
   }

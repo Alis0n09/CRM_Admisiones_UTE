@@ -25,7 +25,6 @@ export class BecaService {
         where: { id_beca: saved.id_beca },
       });
     } catch (error) {
-      console.error('Error al crear la beca', error);
       return null;
     }
   }
@@ -44,7 +43,6 @@ export class BecaService {
         where: { id_beca },
       });
     } catch (error) {
-      console.error('Error al buscar la beca', error);
       return null;
     }
   }
@@ -69,7 +67,6 @@ export class BecaService {
         where: { id_beca: saved.id_beca },
       });
     } catch (error) {
-      console.error('Error al actualizar la beca', error);
       return null;
     }
   }
@@ -84,7 +81,6 @@ export class BecaService {
 
       return await this.becaRepository.remove(beca);
     } catch (error) {
-      console.error('Error al eliminar la beca', error);
       return null;
     }
   }

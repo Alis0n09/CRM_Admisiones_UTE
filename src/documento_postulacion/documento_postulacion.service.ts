@@ -28,14 +28,12 @@ export class DocumentosPostulacionService {
   }
 
   async create(dto: CreateDocumentosPostulacionDto): Promise<DocumentosPostulacion> {
-    // Verificar si ya existe un documento del mismo tipo para esta postulación
     const documentoExistente = await this.findExistingByTipoAndPostulacion(
       dto.tipo_documento,
       dto.id_postulacion,
     );
 
     if (documentoExistente) {
-      // Si existe, actualizar el documento existente en lugar de crear uno nuevo
       documentoExistente.nombre_archivo = dto.nombre_archivo;
       documentoExistente.url_archivo = dto.url_archivo;
       documentoExistente.estado_documento = dto.estado_documento || documentoExistente.estado_documento || 'Pendiente';
@@ -44,15 +42,12 @@ export class DocumentosPostulacionService {
       }
 
       const saved = await this.repo.save(documentoExistente);
-      
-      // Retornar el documento actualizado con todas sus relaciones
       return await this.repo.findOne({
         where: { id_documento: saved.id_documento },
         relations: ['postulacion', 'postulacion.cliente', 'postulacion.carrera'],
       }) || saved;
     }
 
-    // Si no existe, crear uno nuevo
     const doc = this.repo.create({
       postulacion: { id_postulacion: dto.id_postulacion } as any,
       tipo_documento: dto.tipo_documento,
@@ -63,8 +58,6 @@ export class DocumentosPostulacionService {
     });
 
     const saved = await this.repo.save(doc);
-    
-    // Retornar el documento con todas sus relaciones
     return await this.repo.findOne({
       where: { id_documento: saved.id_documento },
       relations: ['postulacion', 'postulacion.cliente', 'postulacion.carrera'],
@@ -153,8 +146,6 @@ export class DocumentosPostulacionService {
     doc.observaciones = dto.observaciones;
 
     const saved = await this.repo.save(doc);
-    
-    // Retornar el documento con todas sus relaciones
     return await this.repo.findOne({
       where: { id_documento: saved.id_documento },
       relations: ['postulacion', 'postulacion.cliente', 'postulacion.carrera'],

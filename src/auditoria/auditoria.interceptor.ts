@@ -80,7 +80,6 @@ export class AuditoriaInterceptor implements NestInterceptor {
             });
           } catch (e) {
             
-            console.error('No se pudo registrar auditoría:', e?.message ?? e);
           }
         },
       }),

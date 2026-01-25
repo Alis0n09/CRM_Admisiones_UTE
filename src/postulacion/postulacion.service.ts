@@ -36,7 +36,6 @@ export class PostulacionService {
         relations: ['cliente', 'carrera'],
       });
     } catch (error) {
-      console.error('Error al crear la postulacion', error);
       return null;
     }
   }
@@ -62,7 +61,6 @@ export class PostulacionService {
         relations: ['cliente', 'carrera'],
       });
     } catch (error) {
-      console.error('Error al buscar la postulacion', error);
       return null;
     }
   }
@@ -77,7 +75,6 @@ export class PostulacionService {
         order: { fecha_postulacion: 'DESC' as any },
       });
     } catch (error) {
-      console.error('Error al buscar postulaciones por usuarioId', error);
       return [];
     }
   }
@@ -100,7 +97,6 @@ export class PostulacionService {
 
   async findActiveByClienteId(id_cliente: string | number): Promise<Postulacion | null> {
     try {
-      // Buscar la postulación más reciente del cliente que esté en estado activo o pendiente
       const postulacion = await this.postulacionRepository.findOne({
         where: { 
           cliente: { id_cliente: id_cliente as any },
@@ -111,7 +107,6 @@ export class PostulacionService {
 
       return postulacion;
     } catch (error) {
-      console.error('Error al buscar postulación activa por cliente', error);
       return null;
     }
   }
@@ -131,7 +126,6 @@ export class PostulacionService {
 
       return await this.postulacionRepository.save(postulacion);
     } catch (error) {
-      console.error('Error al actualizar la postulacion', error);
       return null;
     }
   }
@@ -146,7 +140,6 @@ export class PostulacionService {
 
       return await this.postulacionRepository.remove(postulacion);
     } catch (error) {
-      console.error('Error al eliminar la postulacion', error);
       return null;
     }
   }

@@ -57,7 +57,6 @@ export class DocumentosPostulacionController {
       }),
       limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
       fileFilter: (_req, file, cb) => {
-        // Permitir PDFs e imágenes comunes
         const allowed = [
           'application/pdf',
           'image/jpeg',
@@ -78,9 +77,7 @@ export class DocumentosPostulacionController {
     }
 
     const baseUrl = `${req.protocol}://${req.get('host')}`;
-    // URL pública (nueva pestaña sin token)
     const url_archivo = `${baseUrl}/uploads/${file.filename}`;
-    // URL segura (requiere token) por si el frontend usa blob con Authorization
     const url_segura = `${baseUrl}/documentos-postulacion/files/${file.filename}`;
 
     return {
@@ -97,7 +94,6 @@ export class DocumentosPostulacionController {
   @Roles('ADMIN', 'ASESOR', 'ASPIRANTE')
   @Get('files/:filename')
   async getDocumentoFile(@Param('filename') filename: string) {
-    // Evitar path traversal
     if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
       throw new BadRequestException('Nombre de archivo inválido');
     }
@@ -119,7 +115,6 @@ export class DocumentosPostulacionController {
     const roles: string[] = user?.roles ?? [];
     const isAspirante = roles.includes('ASPIRANTE');
 
-    // Verificar que la postulación existe
     const postulacion = await this.postulacionService.findOne(dto.id_postulacion);
     if (!postulacion) {
       throw new ForbiddenException('La postulación no existe');
@@ -131,13 +126,11 @@ export class DocumentosPostulacionController {
         throw new ForbiddenException('Acceso no permitido');
       }
 
-      // Verificar que la postulación pertenece al cliente del aspirante
       if (postulacion.cliente.id_cliente !== idCliente) {
         throw new ForbiddenException('No tiene permiso para crear documentos en esta postulación');
       }
     }
 
-    // ASESOR y ADMIN pueden crear documentos en cualquier postulación sin restricción adicional
     return await this.service.create(dto);
   }
 
@@ -171,7 +164,6 @@ export class DocumentosPostulacionController {
     const roles: string[] = user?.roles ?? [];
     const isAspirante = roles.includes('ASPIRANTE');
 
-    // Verificar que la postulación existe
     const postulacion = await this.postulacionService.findOne(id_postulacion);
     if (!postulacion) {
       throw new ForbiddenException('La postulación no existe');
@@ -183,7 +175,6 @@ export class DocumentosPostulacionController {
         throw new ForbiddenException('Acceso no permitido');
       }
 
-      // Verificar que la postulación pertenece al cliente del aspirante
       if (postulacion.cliente.id_cliente !== idCliente) {
         throw new ForbiddenException('No tiene permiso para ver documentos de esta postulación');
       }
@@ -226,7 +217,6 @@ export class DocumentosPostulacionController {
         throw new ForbiddenException('Acceso no permitido');
       }
 
-      // Verificar que el documento pertenece a una postulación del aspirante
       if (!documento || !documento.postulacion) {
         throw new ForbiddenException('Documento no encontrado');
       }
@@ -252,7 +242,6 @@ export class DocumentosPostulacionController {
     const roles: string[] = user?.roles ?? [];
     const isAspirante = roles.includes('ASPIRANTE');
 
-    // Verificar que el documento existe
     const documentoExistente = await this.service.findOne(id_documento);
     if (!documentoExistente || !documentoExistente.postulacion) {
       throw new ForbiddenException('Documento no encontrado');
@@ -269,7 +258,6 @@ export class DocumentosPostulacionController {
         throw new ForbiddenException('No tiene permiso para actualizar este documento');
       }
 
-      // Verificar que la nueva postulación también pertenece al cliente (si se está cambiando)
       if (dto.id_postulacion && dto.id_postulacion !== documentoExistente.postulacion.id_postulacion) {
         const nuevaPostulacion = await this.postulacionService.findOne(dto.id_postulacion);
         if (!nuevaPostulacion) {
@@ -280,7 +268,6 @@ export class DocumentosPostulacionController {
         }
       }
     } else {
-      // ASESOR y ADMIN: verificar que la nueva postulación existe (si se está cambiando)
       if (dto.id_postulacion && dto.id_postulacion !== documentoExistente.postulacion.id_postulacion) {
         const nuevaPostulacion = await this.postulacionService.findOne(dto.id_postulacion);
         if (!nuevaPostulacion) {
@@ -304,7 +291,6 @@ export class DocumentosPostulacionController {
     const roles: string[] = user?.roles ?? [];
     const isAspirante = roles.includes('ASPIRANTE');
 
-    // Verificar que el documento existe
     const documentoExistente = await this.service.findOne(id_documento);
     if (!documentoExistente || !documentoExistente.postulacion) {
       throw new ForbiddenException('Documento no encontrado');
@@ -321,7 +307,6 @@ export class DocumentosPostulacionController {
         throw new ForbiddenException('No tiene permiso para actualizar este documento');
       }
 
-      // Verificar que la nueva postulación también pertenece al cliente (si se está cambiando)
       if (dto.id_postulacion && dto.id_postulacion !== documentoExistente.postulacion.id_postulacion) {
         const nuevaPostulacion = await this.postulacionService.findOne(dto.id_postulacion);
         if (!nuevaPostulacion) {
@@ -332,7 +317,6 @@ export class DocumentosPostulacionController {
         }
       }
     } else {
-      // ASESOR y ADMIN: verificar que la nueva postulación existe (si se está cambiando)
       if (dto.id_postulacion && dto.id_postulacion !== documentoExistente.postulacion.id_postulacion) {
         const nuevaPostulacion = await this.postulacionService.findOne(dto.id_postulacion);
         if (!nuevaPostulacion) {

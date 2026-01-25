@@ -29,7 +29,6 @@ export class TareaCrmService {
 
       return await this.tareaRepository.save(tarea);
     } catch (error) {
-      console.error('Error al crear la tarea', error);
       return null;
     }
   }
@@ -61,7 +60,6 @@ export class TareaCrmService {
         relations: ['empleado', 'cliente'],
       });
     } catch (error) {
-      console.error('Error al buscar la tarea', error);
       return null;
     }
   }
@@ -92,7 +90,6 @@ export class TareaCrmService {
 
       return await this.tareaRepository.save(tarea);
     } catch (error) {
-      console.error('Error al actualizar la tarea', error);
       return null;
     }
   }
@@ -107,7 +104,6 @@ export class TareaCrmService {
 
       return await this.tareaRepository.remove(tarea);
     } catch (error) {
-      console.error('Error al eliminar la tarea', error);
       return null;
     }
   }

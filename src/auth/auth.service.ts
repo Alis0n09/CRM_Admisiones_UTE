@@ -23,22 +23,10 @@ export class AuthService {
     const ok = await bcrypt.compare(password, usuario.password_hash);
     if (!ok) throw new UnauthorizedException('Credenciales incorrectas');
 
-    console.log('Usuario encontrado:', {
-      email: usuario.email,
-      id_usuario: usuario.id_usuario,
-      rolUsuarios_length: usuario.rolUsuarios?.length ?? 0,
-      rolUsuarios: usuario.rolUsuarios?.map(ru => ({
-        id: ru.id,
-        rol: ru.rol ? { id: ru.rol.id_rol, nombre: ru.rol.nombre } : null
-      })) ?? []
-    });
-
     const roles = usuario.rolUsuarios
       ?.filter((ru) => ru.rol && ru.rol.nombre)
       ?.map((ru) => ru.rol.nombre)
       ?? [];
-
-    console.log('Roles extraídos:', roles);
 
     const payload = {
       sub: usuario.id_usuario,
@@ -47,8 +35,6 @@ export class AuthService {
       id_cliente: usuario.id_cliente ?? null,
       id_empleado: usuario.id_empleado ?? null,
     };
-
-    console.log('Payload JWT:', payload);
 
     const access_token = this.jwtService.sign(payload);
 

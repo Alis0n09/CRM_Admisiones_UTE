@@ -25,7 +25,6 @@ export class CarreraService {
       const carrera = this.carreraRepository.create(createCarreraDto);
       return await this.carreraRepository.save(carrera);
     } catch (error) {
-      console.error('Error al crear la carrera', error);
       return null;
     }
   }
@@ -49,7 +48,6 @@ export class CarreraService {
         where: { id_carrera },
       });
     } catch (error) {
-      console.error('Error al buscar la carrera', error);
       return null;
     }
   }
@@ -69,7 +67,6 @@ export class CarreraService {
       Object.assign(carrera, updateCarreraDto);
       return await this.carreraRepository.save(carrera);
     } catch (error) {
-      console.error('Error al actualizar la carrera', error);
       return null;
     }
   }
@@ -85,7 +82,6 @@ export class CarreraService {
 
       return await this.carreraRepository.remove(carrera);
     } catch (error) {
-      console.error('Error al eliminar la carrera', error);
       return null;
     }
   }

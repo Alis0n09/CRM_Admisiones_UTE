@@ -35,15 +35,6 @@ export class RolesGuard implements CanActivate {
     const ok = required.some((role) => userRoles.includes(role));
     
     if (!ok) {
-      console.log('🚫 RolesGuard - Acceso denegado:', {
-        requiredRoles,
-        userRoles,
-        userEmail: user.email,
-        hasRoles: userRoles.length > 0,
-        message: userRoles.length === 0 
-          ? 'El usuario NO tiene roles asignados en el token. Verifica que el usuario tenga roles en la BD y haz login nuevamente.'
-          : `El usuario tiene roles [${userRoles.join(', ')}] pero necesita uno de: [${required.join(', ')}]`
-      });
       throw new ForbiddenException('No tienes permisos');
     }
 

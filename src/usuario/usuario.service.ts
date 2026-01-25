@@ -75,21 +75,8 @@ export class UsuarioService {
         .where('LOWER(usuario.email) = LOWER(:email)', { email: normalizedEmail })
         .getOne();
 
-      if (usuario) {
-        console.log('📋 Usuario encontrado en BD:', {
-          email: usuario.email,
-          emailNormalizado: normalizedEmail,
-          coinciden: usuario.email.toLowerCase() === normalizedEmail,
-          activo: usuario.activo,
-          rolUsuariosCount: usuario.rolUsuarios?.length ?? 0
-        });
-      } else {
-        console.log('⚠️ No se encontró usuario con email:', normalizedEmail);
-      }
-
       return usuario;
     } catch (error) {
-      console.error('❌ Error en findByEmail:', error);
       return null;
     }
   }
@@ -110,10 +97,14 @@ export class UsuarioService {
   async update(id_usuario: string, dto: any) {
     const usuario = await this.usuarioRepository.findOne({
       where: { id_usuario },
+      relations: ['rolUsuarios'],
     });
     if (!usuario) throw new NotFoundException('Usuario no encontrado');
 
     const payload: Record<string, unknown> = { ...dto };
+    const rolesIds: string[] | undefined = Array.isArray(payload.rolesIds) 
+      ? (payload.rolesIds as string[]) 
+      : undefined;
     delete payload.rolesIds;
 
     if (payload.password != null && payload.password !== '') {
@@ -135,6 +126,25 @@ export class UsuarioService {
     if (Object.keys(toUpdate).length > 0) {
       await this.usuarioRepository.update({ id_usuario }, toUpdate);
     }
+
+    if (rolesIds !== undefined) {
+      const usuarioConRoles = await this.usuarioRepository.findOne({
+        where: { id_usuario },
+        relations: ['rolUsuarios'],
+      });
+      if (usuarioConRoles && usuarioConRoles.rolUsuarios && usuarioConRoles.rolUsuarios.length > 0) {
+        await this.rolUsuarioRepository.remove(usuarioConRoles.rolUsuarios);
+      }
+      if (rolesIds && rolesIds.length > 0) {
+        const usuarioActualizado = await this.usuarioRepository.findOne({
+          where: { id_usuario },
+        });
+        if (usuarioActualizado) {
+          await this.asignarRoles(usuarioActualizado, rolesIds);
+        }
+      }
+    }
+
     return this.findOne(id_usuario);
   }
 

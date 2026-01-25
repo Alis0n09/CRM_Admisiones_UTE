@@ -24,7 +24,6 @@ export class EmpleadoService {
       const empleado = this.empleadoRepository.create(createEmpleadoDto);
       return await this.empleadoRepository.save(empleado);
     } catch (error) {
-      console.error('Error al crear el empleado:', error);
       return null;
     }
   }
@@ -44,7 +43,6 @@ export class EmpleadoService {
         where: { id_empleado: id_empleado },
       });
     } catch (error) {
-      console.error('Error al buscar el empleado:', error);
       return null;
     }
   }
@@ -65,7 +63,6 @@ export class EmpleadoService {
 
       return await this.empleadoRepository.save(empleado);
     } catch (error) {
-      console.error('Error al actualizar el empleado:', error);
       return null;
     }
   }
@@ -81,7 +78,6 @@ export class EmpleadoService {
 
       return await this.empleadoRepository.remove(empleado);
     } catch (error) {
-      console.error('Error al eliminar el empleado:', error);
       return null;
     }
   }
