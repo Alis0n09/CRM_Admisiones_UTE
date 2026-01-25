@@ -8,7 +8,6 @@ import {
 } from 'class-validator';
 
 export class UpdateClienteDto {
-  // ===== Datos básicos =====
   @IsString()
   @IsNotEmpty()
   @Length(1, 100)
@@ -29,7 +28,6 @@ export class UpdateClienteDto {
   @Length(1, 20)
   numero_identificacion: string;
 
-  // ===== Contacto =====
   @IsOptional()
   @IsEmail()
   correo?: string;
@@ -44,7 +42,6 @@ export class UpdateClienteDto {
   @Length(1, 20)
   celular?: string;
 
-  // ===== Dirección =====
   @IsOptional()
   @IsString()
   @Length(1, 150)
@@ -60,7 +57,6 @@ export class UpdateClienteDto {
   @Length(1, 20)
   numero_casa?: string;
 
-  // ===== Datos personales =====
   @IsOptional()
   @IsString()
   @Length(1, 50)
@@ -80,7 +76,6 @@ export class UpdateClienteDto {
   @IsDateString()
   fecha_nacimiento?: string;
 
-  // ===== CRM =====
   @IsString()
   @IsNotEmpty()
   @Length(1, 50)

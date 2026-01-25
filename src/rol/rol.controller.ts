@@ -25,7 +25,6 @@ import { Roles } from 'src/decorators/roles.decorator';
 export class RolController {
   constructor(private readonly rolService: RolService) {}
 
-  // ✅ CREATE → solo ADMIN
   @Post()
   @Roles('ADMIN')
   async create(@Body() dto: CreateRolDto) {
@@ -38,7 +37,6 @@ export class RolController {
     return new SuccessResponseDto('Rol creado con éxito', rol);
   }
 
-  // ✅ READ 
   @Get()
   @Roles('ADMIN')
   async findAll(): Promise<SuccessResponseDto<Rol[]>> {
@@ -51,7 +49,6 @@ export class RolController {
     return new SuccessResponseDto('Roles obtenidos con éxito', roles);
   }
 
-  // ✅ READ ONE → todos
   @Get(':id_rol')
   @Roles('ADMIN')
   async findOne(@Param('id_rol') id_rol: string) {
@@ -64,7 +61,6 @@ export class RolController {
     return new SuccessResponseDto('Rol obtenido con éxito', rol);
   }
 
-  // ✅ UPDATE → solo ADMIN
   @Put(':id_rol')
   @Roles('ADMIN')
   async update(@Param('id_rol') id_rol: string, @Body() dto: UpdateRolDto) {
@@ -77,7 +73,6 @@ export class RolController {
     return new SuccessResponseDto('Rol actualizado con éxito', rol);
   }
 
-  // ✅ DELETE → solo ADMIN
   @Delete(':id_rol')
   @Roles('ADMIN')
   async remove(@Param('id_rol') id_rol: string) {

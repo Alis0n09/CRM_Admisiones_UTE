@@ -11,8 +11,14 @@ export class AuthService {
   ) {}
 
   async login(email: string, password: string) {
-    const usuario = await this.usuarioService.findByEmail(email);
+    const normalizedEmail = (email ?? '').trim().toLowerCase();
+    
+    const usuario = await this.usuarioService.findByEmail(normalizedEmail);
     if (!usuario) throw new UnauthorizedException('Credenciales incorrectas');
+
+    if (!usuario.activo) {
+      throw new UnauthorizedException('Tu cuenta está desactivada');
+    }
 
     const ok = await bcrypt.compare(password, usuario.password_hash);
     if (!ok) throw new UnauthorizedException('Credenciales incorrectas');
@@ -43,6 +49,8 @@ export class AuthService {
     };
 
     console.log('Payload JWT:', payload);
+
+    const access_token = this.jwtService.sign(payload);
 
     return {
       access_token,

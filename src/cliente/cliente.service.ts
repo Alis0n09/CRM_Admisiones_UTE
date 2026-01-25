@@ -25,7 +25,6 @@ export class ClienteService {
 
   async create(createClienteDto: CreateClienteDto): Promise<Cliente> {
     try {
-      
       const exists = await this.clienteRepository.findOne({
         where: { numero_identificacion: createClienteDto.numero_identificacion },
       });
@@ -39,7 +38,6 @@ export class ClienteService {
       const cliente = this.clienteRepository.create(createClienteDto);
       return await this.clienteRepository.save(cliente);
     } catch (error: any) {
-      
       if (error?.code === '23505') {
         if (error?.detail?.includes('numero_identificacion')) {
           throw new BadRequestException(
@@ -48,8 +46,6 @@ export class ClienteService {
         }
         throw new BadRequestException('Ya existe un registro con datos duplicados');
       }
-
-      
       if (
         error instanceof BadRequestException ||
         error instanceof NotFoundException
@@ -64,8 +60,6 @@ export class ClienteService {
 
 async findAll(options: IPaginationOptions & { search?: string }): Promise<Pagination<Cliente>> {
   const queryBuilder = this.clienteRepository.createQueryBuilder('cliente');
-  
-  // Si hay un término de búsqueda, agregar condiciones WHERE
   if (options.search && options.search.trim()) {
     const searchTerm = `%${options.search.trim()}%`;
     queryBuilder.where(
@@ -94,8 +88,6 @@ async findAll(options: IPaginationOptions & { search?: string }): Promise<Pagina
         where: { id_cliente },
       });
       if (!cliente) throw new NotFoundException('Cliente no encontrado');
-
-      
       if (
         updateClienteDto.numero_identificacion &&
         updateClienteDto.numero_identificacion !== cliente.numero_identificacion
