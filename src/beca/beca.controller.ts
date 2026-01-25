@@ -19,7 +19,7 @@ import { SuccessResponseDto } from 'src/common/dto/response.dto';
 import { QueryDto } from 'src/common/dto/query.dto';
 import { Beca } from './entities/beca.entity';
 
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard'; // o donde lo tengas
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard'; 
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 
