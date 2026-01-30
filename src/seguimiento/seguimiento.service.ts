@@ -26,7 +26,6 @@ export class SeguimientoService {
 
       return await this.seguimientoRepository.save(seguimiento);
     } catch (error) {
-      console.error('Error al crear el seguimiento', error);
       return null;
     }
   }
@@ -54,7 +53,6 @@ export class SeguimientoService {
         relations: ['cliente'],
       });
     } catch (error) {
-      console.error('Error al buscar el seguimiento', error);
       return null;
     }
   }
@@ -81,7 +79,6 @@ export class SeguimientoService {
       Object.assign(seguimiento, updateSeguimientoDto);
       return await this.seguimientoRepository.save(seguimiento);
     } catch (error) {
-      console.error('Error al actualizar el seguimiento', error);
       return null;
     }
   }
@@ -94,7 +91,6 @@ export class SeguimientoService {
       if (!seguimiento) return null;
       return await this.seguimientoRepository.remove(seguimiento);
     } catch (error) {
-      console.error('Error al eliminar el seguimiento', error);
       return null;
     }
   }

@@ -7,11 +7,13 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { UsuarioModule } from 'src/usuario/usuario.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
     ConfigModule,
     UsuarioModule,
+    MailModule,
 
     PassportModule.register({ defaultStrategy: 'jwt' }),
 

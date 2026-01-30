@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
@@ -70,6 +71,7 @@ export class UsuarioController {
   }
 
   @Put(':id_usuario')
+  @Patch(':id_usuario')
   @Roles('ADMIN')
   async update(
     @Param('id_usuario') id_usuario: string,

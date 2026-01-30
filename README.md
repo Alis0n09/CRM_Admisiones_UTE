@@ -89,9 +89,15 @@ DB_NAME=crm_admisiones_ute
 
 JWT_SECRET=TU_SECRETO
 JWT_EXPIRES_IN=1d
-MONGO_URI=mongodb://localhost:27017/ 
-MAIL_USER=tu_correo@gmail.com  
-MAIL_PASS=tu_app_password      
+MONGO_URI=mongodb://localhost:27017/
+
+# Correo (recuperación de contraseña). Gmail: usa tu correo y una *contraseña de aplicación*
+# (Cuenta Google → Seguridad → Verificación en 2 pasos → Contraseñas de aplicación).
+MAIL_USER=tu_correo@gmail.com
+MAIL_PASS=tu_app_password
+
+# URL del frontend (enlace de “restablecer contraseña”). Vite suele usar 5173.
+FRONTEND_URL=http://localhost:5173      
 
 
 ---
