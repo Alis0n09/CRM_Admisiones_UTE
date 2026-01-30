@@ -6,7 +6,9 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
-const ALLOWED_ORIGINS = [
+
+
+const DEFAULT_ORIGINS = [
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
@@ -18,7 +20,13 @@ const ALLOWED_ORIGINS = [
   'http://127.0.0.1:3000',
   'http://127.0.0.1:4200',
   'https://alivic-admission.desarrollo-software.xyz',
+  'https://alivic-admisiones.desarrollo-software.xyz',
+  'http://alivic-admission.desarrollo-software.xyz',
+  'http://alivic-admisiones.desarrollo-software.xyz',
 ];
+const ALLOWED_ORIGINS =
+  process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) ||
+  DEFAULT_ORIGINS;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
