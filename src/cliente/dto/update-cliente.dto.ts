@@ -78,6 +78,6 @@ export class UpdateClienteDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(1, 50)
+  @Length(1, 200)
   origen: string;
 }

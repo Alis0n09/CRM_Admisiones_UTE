@@ -2,6 +2,8 @@ import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { Public } from './public.decorator';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -29,5 +31,17 @@ export class AuthController {
           : '✅ Token válido con roles asignados'
       }
     };
+  }
+
+  @Post('forgot-password')
+  @Public()
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return await this.authService.forgotPassword(dto.email);
+  }
+
+  @Post('reset-password')
+  @Public()
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return await this.authService.resetPassword(dto.token, dto.password);
   }
 }

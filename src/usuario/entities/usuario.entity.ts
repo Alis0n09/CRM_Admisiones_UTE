@@ -36,6 +36,12 @@ export class Usuario {
   @Column({ type: 'uuid', nullable: true })
   id_cliente?: string | null;
 
+  @Column({ type: 'text', nullable: true })
+  token_reset?: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  fecha_expiracion_reset?: Date | null;
+
   @OneToOne(() => Empleado, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'id_empleado' })
   empleado?: Empleado;

@@ -56,11 +56,24 @@ export class PostulacionService {
 
   async findOne(id_postulacion: string): Promise<Postulacion | null> {
     try {
-      return await this.postulacionRepository.findOne({
-        where: { id_postulacion },
+      const cleanId = id_postulacion?.trim();
+      if (!cleanId) {
+        console.log('ID de postulación vacío en findOne');
+        return null;
+      }
+      
+      const postulacion = await this.postulacionRepository.findOne({
+        where: { id_postulacion: cleanId },
         relations: ['cliente', 'carrera'],
       });
+      
+      if (!postulacion) {
+        console.log(`Postulación no encontrada en findOne con ID: ${cleanId}`);
+      }
+      
+      return postulacion;
     } catch (error) {
+      console.error('Error en findOne:', error);
       return null;
     }
   }
@@ -132,14 +145,42 @@ export class PostulacionService {
 
   async remove(id_postulacion: string): Promise<Postulacion | null> {
     try {
+      // Limpiar el ID por si tiene espacios o caracteres extra
+      const cleanId = id_postulacion?.trim();
+      
+      if (!cleanId) {
+        console.log('ID de postulación vacío o inválido');
+        return null;
+      }
+
+      console.log(`Buscando postulación con ID: ${cleanId}`);
+
+      // Intentar primero con findOne
       const postulacion = await this.postulacionRepository.findOne({
-        where: { id_postulacion },
+        where: { id_postulacion: cleanId },
       });
 
-      if (!postulacion) return null;
+      if (!postulacion) {
+        console.log(`Postulación no encontrada con ID: ${cleanId}`);
+        
+        // Intentar también con findBy para verificar si existe alguna postulación
+        const allPostulaciones = await this.postulacionRepository.find({
+          take: 5,
+          select: ['id_postulacion'],
+        });
+        console.log(`IDs de ejemplo en la BD:`, allPostulaciones.map(p => p.id_postulacion));
+        
+        return null;
+      }
 
-      return await this.postulacionRepository.remove(postulacion);
+      console.log(`Postulación encontrada, eliminando: ${postulacion.id_postulacion}`);
+      const removed = await this.postulacionRepository.remove(postulacion);
+      console.log(`Postulación eliminada exitosamente`);
+      
+      return removed;
     } catch (error) {
+      console.error('Error en remove:', error);
+      console.error('Stack trace:', error?.stack);
       return null;
     }
   }

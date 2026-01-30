@@ -154,4 +154,30 @@ export class UsuarioService {
     await this.usuarioRepository.delete({ id_usuario });
     return user;
   }
+
+  async updateResetToken(email: string, token: string, fechaExpiracion: Date) {
+    const normalizedEmail = (email ?? '').trim().toLowerCase();
+    await this.usuarioRepository.update(
+      { email: normalizedEmail },
+      { token_reset: token, fecha_expiracion_reset: fechaExpiracion }
+    );
+  }
+
+  async findByResetToken(token: string): Promise<Usuario | null> {
+    try {
+      return await this.usuarioRepository.findOne({
+        where: { token_reset: token },
+        relations: ['empleado', 'cliente', 'rolUsuarios', 'rolUsuarios.rol'],
+      });
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async clearResetToken(id_usuario: string) {
+    await this.usuarioRepository.update(
+      { id_usuario },
+      { token_reset: null, fecha_expiracion_reset: null }
+    );
+  }
 }
