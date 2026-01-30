@@ -17,6 +17,7 @@ const ALLOWED_ORIGINS = [
   'http://127.0.0.1:5175',
   'http://127.0.0.1:3000',
   'http://127.0.0.1:4200',
+  'https://alivic-admission.desarrollo-software.xyz',
 ];
 
 async function bootstrap() {
