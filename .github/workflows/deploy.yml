@@ -1,4 +1,4 @@
-name: 🚀 Deploy CRM Admisiones backend API to VPS
+name: 🚀 Deploy CRM Admisiones backend API to VPS - CICD
 
 on:
   push:
