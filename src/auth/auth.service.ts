@@ -12,7 +12,8 @@ export class AuthService {
 
   async login(email: string, password: string) {
     const normalizedEmail = (email ?? '').trim().toLowerCase();
-    
+    if (!normalizedEmail) throw new UnauthorizedException('Credenciales incorrectas');
+
     const usuario = await this.usuarioService.findByEmail(normalizedEmail);
     if (!usuario) throw new UnauthorizedException('Credenciales incorrectas');
 
@@ -20,7 +21,16 @@ export class AuthService {
       throw new UnauthorizedException('Tu cuenta está desactivada');
     }
 
-    const ok = await bcrypt.compare(password, usuario.password_hash);
+    const hash = usuario.password_hash;
+    if (!hash || typeof hash !== 'string') {
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
+    let ok = false;
+    try {
+      ok = await bcrypt.compare(password, hash);
+    } catch {
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
     if (!ok) throw new UnauthorizedException('Credenciales incorrectas');
 
     const roles = usuario.rolUsuarios

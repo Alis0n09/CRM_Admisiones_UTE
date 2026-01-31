@@ -51,7 +51,7 @@ export class Cliente {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fecha_registro: Date;
 
-  @Column({ length: 50, nullable: false })
+  @Column({ length: 50, nullable: true })
   origen: string;
 
   @Column({ type: 'date', default: () => 'CURRENT_DATE' })

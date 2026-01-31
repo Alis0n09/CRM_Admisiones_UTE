@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -153,5 +153,60 @@ export class UsuarioService {
     if (!user) return null;
     await this.usuarioRepository.delete({ id_usuario });
     return user;
+  }
+
+  /** Obtiene o crea el rol ADMIN (para bootstrap del primer admin). */
+  async getOrCreateAdminRol(): Promise<Rol> {
+    let rol = await this.rolRepository.findOne({ where: { nombre: 'ADMIN' } });
+    if (!rol) {
+      rol = this.rolRepository.create({ nombre: 'ADMIN' });
+      await this.rolRepository.save(rol);
+    }
+    return rol;
+  }
+
+  /** Cuenta cuántos usuarios tienen el rol ADMIN. */
+  async countUsersWithAdminRole(): Promise<number> {
+    return await this.rolUsuarioRepository
+      .createQueryBuilder('ru')
+      .innerJoin('ru.rol', 'rol')
+      .where('UPPER(rol.nombre) = :name', { name: 'ADMIN' })
+      .getCount();
+  }
+
+  /**
+   * Crea el primer administrador. Solo funciona si aún no existe ningún usuario con rol ADMIN.
+   * El usuario se crea sin id_empleado ni id_cliente (solo admin de sistema).
+   */
+  async createFirstAdmin(email: string, password: string): Promise<Usuario> {
+    const count = await this.countUsersWithAdminRole();
+    if (count > 0) {
+      throw new ConflictException(
+        'Ya existe al menos un administrador. Use el endpoint POST /auth/login para ingresar.',
+      );
+    }
+
+    const rolAdmin = await this.getOrCreateAdminRol();
+    const password_hash = await bcrypt.hash(password, 10);
+    const normalizedEmail = (email ?? '').trim().toLowerCase();
+
+    const existente = await this.findByEmail(normalizedEmail);
+    if (existente) {
+      throw new ConflictException(
+        'Ya existe un usuario con ese correo. Use el endpoint POST /auth/login.',
+      );
+    }
+
+    const usuario = this.usuarioRepository.create({
+      email: normalizedEmail,
+      password_hash,
+      activo: true,
+      id_empleado: null,
+      id_cliente: null,
+    });
+
+    const saved = await this.usuarioRepository.save(usuario);
+    await this.asignarRoles(saved, [rolAdmin.id_rol]);
+    return saved;
   }
 }
