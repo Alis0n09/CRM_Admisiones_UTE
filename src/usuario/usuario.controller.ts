@@ -11,6 +11,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -20,16 +21,27 @@ import { QueryDto } from 'src/common/dto/query.dto';
 import { Usuario } from './entities/usuario.entity';
 
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
 
+// TEMPORAL: Sin RolesGuard ni @Roles('ADMIN') para poder crear el primer admin logueado con cualquier usuario. Restaurar cuando ya exista un admin.
 @Controller('usuario')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
+  /** Crea el primer admin (solo si aún no hay ninguno). Cualquier usuario logueado puede llamarlo. */
+  @Post('crear-primer-admin')
+  async crearPrimerAdmin(@Body() body: { email: string; password: string }) {
+    const email = body?.email?.trim();
+    const password = body?.password;
+    if (!email) throw new BadRequestException('El campo email es requerido');
+    if (!password || String(password).length < 6) {
+      throw new BadRequestException('El password es requerido y debe tener al menos 6 caracteres');
+    }
+    const usuario = await this.usuarioService.createFirstAdmin(email, password);
+    return new SuccessResponseDto('Administrador creado con éxito', usuario);
+  }
+
   @Post('empleado/:id_empleado')
-  @Roles('ADMIN')
   async createEmpleadoUsuario(
     @Param('id_empleado') id_empleado: string,
     @Body() dto: CreateUsuarioDto,
@@ -41,7 +53,6 @@ export class UsuarioController {
   }
 
   @Post('cliente/:id_cliente')
-  @Roles('ADMIN')
   async createClienteUsuario(
     @Param('id_cliente') id_cliente: string,
     @Body() dto: CreateUsuarioDto,
@@ -53,7 +64,6 @@ export class UsuarioController {
   }
 
   @Get()
-  @Roles('ADMIN')
   async findAll(@Query() query: QueryDto): Promise<SuccessResponseDto<Usuario[]>> {
     const result: Usuario[] = await this.usuarioService.findAll(); // <-- sin pasar query
     if (!result)
@@ -63,7 +73,6 @@ export class UsuarioController {
   }
 
   @Get(':id_usuario')
-  @Roles('ADMIN')
   async findOne(@Param('id_usuario') id_usuario: string) {
     const usuario = await this.usuarioService.findOne(id_usuario);
     if (!usuario) throw new NotFoundException('Usuario no encontrado');
@@ -72,7 +81,6 @@ export class UsuarioController {
 
   @Put(':id_usuario')
   @Patch(':id_usuario')
-  @Roles('ADMIN')
   async update(
     @Param('id_usuario') id_usuario: string,
     @Body() dto: UpdateUsuarioDto,
@@ -83,7 +91,6 @@ export class UsuarioController {
   }
 
   @Delete(':id_usuario')
-  @Roles('ADMIN')
   async remove(@Param('id_usuario') id_usuario: string) {
     const eliminado = await this.usuarioService.remove(id_usuario);
     if (!eliminado) throw new NotFoundException('Usuario no encontrado');

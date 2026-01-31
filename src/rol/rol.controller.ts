@@ -17,16 +17,14 @@ import { SuccessResponseDto } from 'src/common/dto/response.dto';
 import { Rol } from './entities/rol.entity';
 
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
 
+// TEMPORAL: Sin RolesGuard ni @Roles('ADMIN') para poder listar roles y crear el primer admin. Restaurar cuando ya exista un admin.
 @Controller('rol')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 export class RolController {
   constructor(private readonly rolService: RolService) {}
 
   @Post()
-  @Roles('ADMIN')
   async create(@Body() dto: CreateRolDto) {
     const rol = await this.rolService.create(dto);
 
@@ -38,7 +36,6 @@ export class RolController {
   }
 
   @Get()
-  @Roles('ADMIN')
   async findAll(): Promise<SuccessResponseDto<Rol[]>> {
     const roles = await this.rolService.findAll();
 
@@ -50,7 +47,6 @@ export class RolController {
   }
 
   @Get(':id_rol')
-  @Roles('ADMIN')
   async findOne(@Param('id_rol') id_rol: string) {
     const rol = await this.rolService.findOne(id_rol);
 
@@ -62,7 +58,6 @@ export class RolController {
   }
 
   @Put(':id_rol')
-  @Roles('ADMIN')
   async update(@Param('id_rol') id_rol: string, @Body() dto: UpdateRolDto) {
     const rol = await this.rolService.update(id_rol, dto);
 
@@ -74,7 +69,6 @@ export class RolController {
   }
 
   @Delete(':id_rol')
-  @Roles('ADMIN')
   async remove(@Param('id_rol') id_rol: string) {
     const rol = await this.rolService.remove(id_rol);
 
