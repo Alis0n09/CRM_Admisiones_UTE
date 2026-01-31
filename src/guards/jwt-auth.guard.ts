@@ -10,6 +10,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   canActivate(context: ExecutionContext) {
+    // TEMPORAL: quitar BYPASS_AUTH cuando ya tengas admin creado
+    if (process.env.BYPASS_AUTH === 'true') return true;
+
     const isPublic = this.reflector.getAllAndOverride<boolean>(
       IS_PUBLIC_KEY,
       [context.getHandler(), context.getClass()],

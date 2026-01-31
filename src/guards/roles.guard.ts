@@ -12,6 +12,9 @@ export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
+    // TEMPORAL: quitar BYPASS_AUTH cuando ya tengas admin creado
+    if (process.env.BYPASS_AUTH === 'true') return true;
+
     const requiredRoles =
       this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
         context.getHandler(),
